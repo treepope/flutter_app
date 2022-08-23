@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/proflie.dart';
 import 'package:flutter_application_1/screen/home.dart';
+import 'package:flutter_application_1/screen/login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
@@ -121,7 +122,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       );
 
                                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-                                        return HomeScreen();
+                                        return LoginScreen();
                                       }));
                                     });
 

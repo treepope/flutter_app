@@ -13,7 +13,11 @@ class _JoinScreentState extends State<JoinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar( title: Text('Create account'),
+      appBar: AppBar(title: Text("Create account"),
+      toolbarHeight: 40,
+      // centerTitle: true,
+      backgroundColor: Color.fromARGB(255, 60, 145, 255),
+      titleTextStyle: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
       ),
       body: Padding(padding: const EdgeInsets.fromLTRB(0, 70, 0, 0),
         child: Container(decoration: const BoxDecoration(
@@ -32,7 +36,7 @@ class _JoinScreentState extends State<JoinScreen> {
                   const Text(
                     'Join Do',style: TextStyle(
                       fontSize: 30,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                   
@@ -41,7 +45,7 @@ class _JoinScreentState extends State<JoinScreen> {
                   ),
                   
                   const Text(
-                    "We'll help you to create a new accountin a few easy steps",style: TextStyle(
+                    "creating an account here is very easy.",style: TextStyle(
                       fontSize: 13,
                     ),
                   ),
@@ -50,11 +54,17 @@ class _JoinScreentState extends State<JoinScreen> {
                     height: 60,
                   ),
                   
-                  SizedBox(
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                     width: double.infinity,
                     height: 40,
                     child: ElevatedButton(
-                      child: Text('Next', style: TextStyle(fontSize: 16)),
+                      style: ElevatedButton.styleFrom(
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(10)
+                        )
+                      ),
+                    child: Text('Next',style: TextStyle(fontSize: 16),),
                       onPressed: () {
                         Navigator.pushReplacement(context,
                             MaterialPageRoute(builder: (context) {

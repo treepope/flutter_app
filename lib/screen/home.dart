@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, unused_field
+
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,11 +12,13 @@ import '../model/proflie.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 
 class HomeScreen extends StatelessWidget {
-
+  
   String? _email;
   String? _password;
   final formKey = GlobalKey<FormState>(); 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  
+
 
   bool validateSave(){
     final form = formKey.currentState;
@@ -39,6 +43,10 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Register/Login"),
+      toolbarHeight: 40,
+      // centerTitle: true,
+      backgroundColor: Color.fromARGB(255, 60, 145, 255),
+      titleTextStyle: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
       ),
       body: Container(decoration: const BoxDecoration(
             image: DecorationImage(
@@ -46,21 +54,28 @@ class HomeScreen extends StatelessWidget {
                 fit: BoxFit.fitWidth,
                 alignment: Alignment.topCenter)),
 
-        child: Padding(padding: const EdgeInsets.fromLTRB(30, 220, 30, 20),
+        child: Padding(padding: const EdgeInsets.fromLTRB(30, 210, 30, 20),
           child: Form(key: formKey,
             child: SingleChildScrollView(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
+                  // const Text('Sign in', style: TextStyle(
+                  //   fontSize: 30,
+                  //   fontWeight: FontWeight.w900,
+                  // )),
+
                   const Text('Welcome',style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 32,
+                        fontWeight: FontWeight.w900,
                       )),
                   
                   const Text('Sign in to continue!',style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 16,
                       )),
                  
-                  const SizedBox(
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
                     height: 20,
                   ),
 
@@ -68,46 +83,82 @@ class HomeScreen extends StatelessWidget {
                   // Image.asset(
                   //   'assets/img/login-cover.png',
                   // ),
-                  
-                  const Text('E-mail', style: TextStyle(fontSize: 16)),
+                     
                   TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Email account',
+                    ),
                     keyboardType: TextInputType.emailAddress,
+    
                   ),
                   
                   const SizedBox(
                     height: 15,
                   ),
                   
-                  const Text('Password', style: TextStyle(fontSize: 16)),
                   TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                    ),
                     obscureText: true,
+                    keyboardType: TextInputType.text,
+               
                   ),
                   
                   const SizedBox(
                     height: 15,
                   ),
+                  
+                  // Container(
+                  //   child: Text('Sign up',
+                  //     textScaleFactor: 2,
+                  //     style: TextStyle(fontSize: 10,color: Colors.black),
+                  //   ),
+                    
+                  //   decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.circular(12),
+                  //     color: Color.fromARGB(255, 231, 0, 0),
+                  //   ),
+                    
+                  //   width: double.infinity,
+                  //   height: 40,
+                  //   alignment: Alignment.center, 
+                  // ),
                   
                   Container(
+                    margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
                     width: double.infinity,
                     height: 40,
-                    child: ElevatedButton.icon(
-                      icon: Icon(Icons.login),
-                      label: Text('Login', style: TextStyle(fontSize: 16)),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(10)
+                        )
+                      ),
+                    child: Text('Sign up',style: TextStyle(fontSize: 16),),
                       onPressed: () {
+
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
-                          return LoginScreen();
+                            return LoginScreen();
                         }));
                       },
                     ),
                   ),
                   
-                  SizedBox(
+
+                  Container(
+                    margin: EdgeInsets.fromLTRB(60, 80, 60, 0),
                     width: double.infinity,
-                    child: ElevatedButton.icon(
-                      icon: Icon(Icons.add),
-                      label: Text('Create account',
-                          style: TextStyle(fontSize: 16)),
+                    height: 32,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Color.fromARGB(255, 23, 202, 77),
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(10),
+                        )
+                      ),
+                    child: Text('Create new account',style: TextStyle(fontSize: 16),),
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
@@ -115,7 +166,7 @@ class HomeScreen extends StatelessWidget {
                         }));
                       },
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

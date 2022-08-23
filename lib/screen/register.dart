@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/proflie.dart';
 import 'package:flutter_application_1/screen/home.dart';
+import 'package:flutter_application_1/screen/login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
@@ -37,22 +38,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
           }
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
-              appBar: AppBar(title: Text('Sign up',
-                  // style: TextStyle(color: Colors.grey),
-                ),
-                // backgroundColor: Colors.white,
-              ),
+              appBar: AppBar(title: Text("Sign up"),
+                toolbarHeight: 40,
+                // centerTitle: true,
+                backgroundColor: Color.fromARGB(255, 60, 145, 255),
+                titleTextStyle: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
+            ),
               body: Padding(
-                padding: const EdgeInsets.fromLTRB(30, 50, 30, 0),
+                padding: const EdgeInsets.fromLTRB(30, 110, 30, 0),
                 child: Container(
                   child: Form(key: formKey,
                       child: SingleChildScrollView(
                           child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        // crossAxisAlignment: CrossAxisAlignment.start,
                         
                         children: [
-                          const Text('E-mail', style: TextStyle(fontSize: 16)),
+                       
+                          const Text("What's your email",style: 
+                            TextStyle(fontSize: 25, fontWeight: FontWeight.w900)),
+
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            height: 5,
+                          ),
+
+                          const Text("enter your email",style: 
+                            TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 5, 0, 20),
+                            height: 20,
+                          ),
+
+                          
+
                           TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'email account',
+                            ),
                             validator: MultiValidator([
                               RequiredValidator(
                                   errorText: "Please enter your email"),
@@ -68,9 +91,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             height: 15,
                           ),
 
-                          const Text('Password',
-                              style: TextStyle(fontSize: 16)),
                           TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'password',
+                            ),
                             controller: password,
                             keyboardType: TextInputType.text,
                             validator: MultiValidator([
@@ -87,9 +111,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             height: 15,
                           ),
                           
-                          const Text('Confirm password',
-                              style: TextStyle(fontSize: 16)),
                           TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'confirm password',
+                            ),
                             controller: confirmpassword,
                             obscureText: true,
                             keyboardType: TextInputType.text,
@@ -110,11 +135,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             height: 15,
                           ),
 
-                          SizedBox(
+                          Container(
+                            margin: EdgeInsets.fromLTRB(0, 70, 0, 0),
                             width: double.infinity,
                             height: 40,
                             child: ElevatedButton(
-                              child: Text('Sign up',style: TextStyle(fontSize: 20),),
+                              style: ElevatedButton.styleFrom(
+                              shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(12)
+                              )
+                            ),
+                              child: Text('Sign up',style: TextStyle(fontSize: 16),),
                               onPressed: () async {
                                 if (formKey.currentState!.validate()) {
                                   formKey.currentState?.save();
