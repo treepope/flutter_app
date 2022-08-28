@@ -3,21 +3,57 @@
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screen/joinApps.dart';
 import 'package:flutter_application_1/screen/login.dart';
 import 'package:flutter_application_1/screen/register.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-import '../model/proflie.dart';
+import 'package:flutter_application_1/model/proflie.dart';
+import 'package:form_field_validator/form_field_validator.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  dynamic user = FirebaseAuth.instance.currentUser;
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: [
+      'email'
+    ]);
+  HomeScreen(this.user, {Key ?key}) : super(key: key);
+  
+  
+  
+  @override
+  _HomeScreenState createState() => _HomeScreenState();}
+
+class _HomeScreenState extends State<HomeScreen> { 
+  
+  static Future<User?> loginUsingEmailPassword({required String email, required String password, required BuildContext context }) async{
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user;
+    try{
+      UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);
+      user = userCredential.user;
+    } on FirebaseAuthException catch (e){
+      if (e.code == "user-not-found"){
+        print("No User found that email");
+      }
+    }
+    return user;
+  }
+
+  Future<FirebaseApp> _initializeFirebase() async{
+    FirebaseApp firebaseApp = await Firebase.initializeApp();
+    return firebaseApp;
+  }
   
   String? _email;
   String? _password;
   final formKey = GlobalKey<FormState>(); 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  
+  GoogleSignInAccount? _account;
 
 
   bool validateSave(){
@@ -31,29 +67,31 @@ class HomeScreen extends StatelessWidget {
       // print('Form is invalid email: $_email, password: $_password');
     }
   }
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
   // void validateSubmit() async{
-  //   if (validateSave()) {
-  //     FirebaseUser user = await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email!, password: _password!);
-  //   }
-  // }
-
-
   @override
   Widget build(BuildContext context) {
+    TextEditingController _emailController = TextEditingController();
+    TextEditingController _passwordController = TextEditingController();
     return Scaffold(
-      appBar: AppBar(title: Text("Register/Login"),
-      toolbarHeight: 40,
-      // centerTitle: true,
-      backgroundColor: Color.fromARGB(255, 60, 145, 255),
-      titleTextStyle: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
-      ),
-      body: Container(decoration: const BoxDecoration(
+      // appBar: AppBar(title: Text("Register/Login"),
+      // toolbarHeight: 40,
+      // // centerTitle: true,
+      // backgroundColor: Color.fromARGB(255, 60, 145, 255),
+      // titleTextStyle: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
+      // ),
+      body: 
+      Container(padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+      decoration: const BoxDecoration(
             image: DecorationImage(
                 image: AssetImage('assets/img/login-cover.png'),
                 fit: BoxFit.fitWidth,
-                alignment: Alignment.topCenter)),
-
+                alignment: Alignment.topCenter),
+                ),
         child: Padding(padding: const EdgeInsets.fromLTRB(30, 210, 30, 20),
           child: Form(key: formKey,
             child: SingleChildScrollView(
@@ -75,7 +113,7 @@ class HomeScreen extends StatelessWidget {
                       )),
                  
                   Container(
-                    margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                    margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                     height: 20,
                   ),
 
@@ -85,9 +123,15 @@ class HomeScreen extends StatelessWidget {
                   // ),
                      
                   TextFormField(
-                    decoration: InputDecoration(
+                    controller: _emailController,
+                    decoration: const InputDecoration(
                       labelText: 'Email account',
                     ),
+                    validator: MultiValidator([
+                      RequiredValidator(
+                        errorText: "Please enter your email"),
+                      EmailValidator(errorText: "Invalid email format!")
+                            ]),
                     keyboardType: TextInputType.emailAddress,
     
                   ),
@@ -97,11 +141,16 @@ class HomeScreen extends StatelessWidget {
                   ),
                   
                   TextFormField(
-                    decoration: InputDecoration(
+                    controller: _passwordController,
+                    decoration: const InputDecoration(
                       labelText: 'Password',
                     ),
                     obscureText: true,
                     keyboardType: TextInputType.text,
+                    validator: MultiValidator([
+                      RequiredValidator(
+                        errorText: "Please enter your password"),
+                      ]),
                
                   ),
                   
@@ -126,7 +175,7 @@ class HomeScreen extends StatelessWidget {
                   // ),
                   
                   Container(
-                    margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                    margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
                     width: double.infinity,
                     height: 40,
                     child: ElevatedButton(
@@ -135,30 +184,44 @@ class HomeScreen extends StatelessWidget {
                           borderRadius: new BorderRadius.circular(10)
                         )
                       ),
-                    child: Text('Sign up',style: TextStyle(fontSize: 16),),
-                      onPressed: () {
-
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                            return LoginScreen();
-                        }));
+                    child: const Text('Sign up',style: TextStyle(fontSize: 16),),
+                      onPressed: () async{
+                        User? user = await loginUsingEmailPassword(
+                          email: _emailController.text, 
+                          password: _passwordController.text, 
+                          context: context);
+                          print(user);
+                          formKey.currentState?.reset();
+                          if (user != null){
+                            Navigator.push(context,MaterialPageRoute(builder: (context) => LoginScreen()));
+                            Fluttertoast.showToast(
+                              msg: 'Login is successful',
+                              gravity: ToastGravity.BOTTOM
+                            );
+                          }
+                          else if(user == null){
+                            Fluttertoast.showToast(
+                              msg: 'user not found!',
+                              gravity: ToastGravity.BOTTOM
+                            );
+                          }
                       },
                     ),
                   ),
                   
 
                   Container(
-                    margin: EdgeInsets.fromLTRB(60, 80, 60, 0),
+                    margin: const EdgeInsets.fromLTRB(60, 80, 60, 0),
                     width: double.infinity,
                     height: 32,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: Color.fromARGB(255, 23, 202, 77),
+                        primary: const Color.fromARGB(255, 23, 202, 77),
                         shape: new RoundedRectangleBorder(
                           borderRadius: new BorderRadius.circular(10),
                         )
                       ),
-                    child: Text('Create new account',style: TextStyle(fontSize: 16),),
+                    child: const Text('Create new account',style: TextStyle(fontSize: 16),),
                       onPressed: () {
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
