@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/model/proflie.dart';
-import 'package:flutter_application_1/screen/home.dart';
 import 'package:flutter_application_1/screen/login.dart';
+import 'package:flutter_application_1/screen/home.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
@@ -69,8 +69,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             margin: EdgeInsets.fromLTRB(0, 5, 0, 20),
                             height: 20,
                           ),
-
-                          
 
                           TextFormField(
                             decoration: InputDecoration(
@@ -167,7 +165,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       );
 
                                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) {
-                                        return HomeScreen(User);
+                                        return LoginScreen(User);
                                       }));
                                     });
 
