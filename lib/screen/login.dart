@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_new
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
+
+import '../services/firebase_services.dart';
 
 class LoginScreen extends StatefulWidget {
   dynamic user = FirebaseAuth.instance.currentUser;
@@ -36,19 +40,19 @@ class _LoginScreenState extends State<LoginScreen> {
     return firebaseApp;
   }
   
-Future<void> loginWithGoogle(BuildContext context) async {
-    GoogleSignIn googleSignIn = GoogleSignIn(
-      scopes: [
-        'https://www.googleapis.com/auth/contacts.readonly',
-      ],
-    );
-    GoogleSignInAccount? user = await googleSignIn.signIn();
-    GoogleSignInAuthentication userAuth = await user!.authentication;
+// Future<void> loginWithGoogle(BuildContext context) async {
+//     GoogleSignIn googleSignIn = GoogleSignIn(
+//       scopes: [
+//         'https://www.googleapis.com/auth/contacts.readonly',
+//       ],
+//     );
+//     GoogleSignInAccount? user = await googleSignIn.signIn();
+//     GoogleSignInAuthentication userAuth = await user!.authentication;
 
-    await _auth.signInWithCredential(GoogleAuthProvider.credential(
-        idToken: userAuth.idToken, accessToken: userAuth.accessToken));
-    // checkAuth(context); // after success route to home.
-  }
+//     await _auth.signInWithCredential(GoogleAuthProvider.credential(
+//         idToken: userAuth.idToken, accessToken: userAuth.accessToken));
+//     // checkAuth(context); // after success route to home.
+//   }
 
   String? _email;
   String? _password;
@@ -99,11 +103,6 @@ Future<void> loginWithGoogle(BuildContext context) async {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
-                  // const Text('Sign in', style: TextStyle(
-                  //   fontSize: 30,
-                  //   fontWeight: FontWeight.w900,
-                  // )),
-
                   const Text('Welcome',style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
@@ -118,11 +117,6 @@ Future<void> loginWithGoogle(BuildContext context) async {
                     height: 20,
                   ),
 
-                  // SvgPicture.asset('assets/img/login-cover.svg'),
-                  // Image.asset(
-                  //   'assets/img/login-cover.png',
-                  // ),
-                     
                   TextFormField(
                     decoration: const InputDecoration(
                       labelText: 'Email account',
@@ -157,22 +151,6 @@ Future<void> loginWithGoogle(BuildContext context) async {
                     height: 15,
                   ),
                   
-                  // Container(
-                  //   child: Text('Sign up',
-                  //     textScaleFactor: 2,
-                  //     style: TextStyle(fontSize: 10,color: Colors.black),
-                  //   ),
-                    
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(12),
-                  //     color: Color.fromARGB(255, 231, 0, 0),
-                  //   ),
-                    
-                  //   width: double.infinity,
-                  //   height: 40,
-                  //   alignment: Alignment.center, 
-                  // ),
-                  
                   InkWell(
                     child: Container(
                       margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
@@ -184,7 +162,7 @@ Future<void> loginWithGoogle(BuildContext context) async {
                             borderRadius: new BorderRadius.circular(10)
                           )
                         ),
-                      child: const Text('Sign up',style: TextStyle(fontSize: 16),),
+                      child: const Text('Sign up',style: TextStyle(fontSize: 18 ),),
                         onPressed: () async{
                           User? user = await loginUsingEmailPassword(
                             email: _emailController.text, 
@@ -210,40 +188,112 @@ Future<void> loginWithGoogle(BuildContext context) async {
                     ),
                   ),
                   
-                InkWell(
-                  child: Container(
+
+
+                  InkWell(
+                    child: Container(
                       margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
                       width: double.infinity,
-                      height: 40,
+                      // alignment: Alignment.center,
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(10)
-                          )
+                          style: ElevatedButton.styleFrom(
+                            shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(10)
+                            ),
+                            // primary: Color.fromARGB(255, 255, 255, 255),
+                            onPrimary: Colors.black,
+                          ),
+                        onPressed: () async {},
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Image(
+                                image: AssetImage("assets/img/icon/facebook-white.png"),
+                                height: 24,
+                                width: 24,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 24, right: 8),
+                                child: Text(
+                                  'Sign in with Google',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      child: const Text('Login with Google',style: TextStyle(fontSize: 16),),
-                        onPressed: () => loginWithGoogle(context)
                       ),
                     ),
-                    
-                  // child: Container(
-                  //   constraints: BoxConstraints.expand(height: 50),
-                  //   child: Text("Login with Google ",
-                  //     textAlign: TextAlign.center,
-                  //     style: TextStyle(fontSize: 18, color: Color.fromARGB(255, 255, 255, 255))
-                  //   ),
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(16), color: Color.fromARGB(255, 22, 154, 241)
-                  //   ),
-                  //   margin: EdgeInsets.only(top: 12),
-                  //   padding: EdgeInsets.all(12)
-                  // ),
-                  // onTap: () => loginWithGoogle(context)
+                  ),
+
+                  
+                  InkWell(
+                    child: Container(
+                      margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                      // alignment: Alignment.center,
+                      width: double.infinity,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(10)
+                            ),
+                            primary: Color.fromARGB(255, 255, 255, 255),
+                            onPrimary: Colors.black,
+                          ),
+                        onPressed: () async {
+                          await FirebaseServices().signInWithGoogle();
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Image(
+                                image: AssetImage("assets/img/icon/google.png"),
+                                height: 24,
+                                width: 24,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 24, right: 8),
+                                child: Text(
+                                  'Sign in with Google',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    alignment: Alignment.center,
+                    child: const Text("───────────── or ─────────────",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Color.fromARGB(150, 160, 160, 160)
+                      ),
+                    ),
                   ),
 
                   InkWell(
                     child: Container(
-                      margin: const EdgeInsets.fromLTRB(60, 80, 60, 0),
+                      margin: const EdgeInsets.fromLTRB(60, 30, 60, 0),
                       width: double.infinity,
                       height: 32,
                       child: ElevatedButton(
