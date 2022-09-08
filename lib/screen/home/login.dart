@@ -3,14 +3,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/screen/joinApps.dart';
-import 'package:flutter_application_1/screen/home.dart';
+import 'package:flutter_application_1/screen/home/home_screen.dart';
+import 'package:flutter_application_1/screen/home/joinApps.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
-
-import '../services/firebase_services.dart';
+import 'package:flutter_application_1/services/firebase_services.dart';
 
 class LoginScreen extends StatefulWidget {
   dynamic user = FirebaseAuth.instance.currentUser;
@@ -189,49 +188,49 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   
 
-
-                  InkWell(
-                    child: Container(
-                      margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                      width: double.infinity,
-                      // alignment: Alignment.center,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(10)
-                            ),
-                            // primary: Color.fromARGB(255, 255, 255, 255),
-                            onPrimary: Colors.black,
-                          ),
-                        onPressed: () async {},
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Image(
-                                image: AssetImage("assets/img/icon/facebook-white.png"),
-                                height: 24,
-                                width: 24,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 24, right: 8),
-                                child: Text(
-                                  'Sign in with Google',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Color.fromARGB(255, 255, 255, 255),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+// TODO Facebook !
+                  // InkWell(
+                  //   child: Container(
+                  //     margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  //     width: double.infinity,
+                  //     // alignment: Alignment.center,
+                  //     child: ElevatedButton(
+                  //         style: ElevatedButton.styleFrom(
+                  //           shape: new RoundedRectangleBorder(
+                  //             borderRadius: new BorderRadius.circular(10)
+                  //           ),
+                  //           // primary: Color.fromARGB(255, 255, 255, 255),
+                  //           onPrimary: Colors.black,
+                  //         ),
+                  //       onPressed: () async {},
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                  //         child: Row(
+                  //           mainAxisSize: MainAxisSize.min,
+                  //           mainAxisAlignment: MainAxisAlignment.center,
+                  //           children: const [
+                  //             Image(
+                  //               image: AssetImage("assets/img/icon/facebook-white.png"),
+                  //               height: 24,
+                  //               width: 24,
+                  //             ),
+                  //             Padding(
+                  //               padding: EdgeInsets.only(left: 24, right: 8),
+                  //               child: Text(
+                  //                 'Sign in with Facebook',
+                  //                 style: TextStyle(
+                  //                   fontSize: 18,
+                  //                   color: Color.fromARGB(255, 255, 255, 255),
+                  //                   fontWeight: FontWeight.w600,
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
 
                   
                   InkWell(
