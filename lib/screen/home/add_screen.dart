@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constant.dart';
-import 'package:flutter_application_1/model/task.dart';
+import 'package:flutter_application_1/models/task.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/controller/checktask_controller.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -116,10 +116,7 @@ class _AddScreenState extends State<AddScreen> {
                             underline: SizedBox(),
                             // icon: SvgPicture.asset("assets/icons/dropdown.svg"),
                             value: choose,
-                            items: [
-                              'Today',
-                              'Tomorrow'
-                            ].map<DropdownMenuItem<String>>((String value) {
+                            items: ['Today','Tomorrow'].map<DropdownMenuItem<String>> ((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(
@@ -148,6 +145,16 @@ class _AddScreenState extends State<AddScreen> {
             child: SizedBox(
               height: 80,
               child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [
+                      backColor[task.color][0],
+                      backColor[task.color][1],
+                    ],
+                  ),
+                ),
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
@@ -160,16 +167,6 @@ class _AddScreenState extends State<AddScreen> {
                       Get.back();
                     },
                     child: Icon(Icons.add, color: Colors.white),
-                  ),
-                ),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topRight,
-                    end: Alignment.bottomLeft,
-                    colors: [
-                      backColor[task.color][0],
-                      backColor[task.color][1],
-                    ],
                   ),
                 ),
               ),

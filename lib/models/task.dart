@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_new, prefer_collection_literals
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constant.dart';
 
@@ -27,13 +29,13 @@ class Task {
 
   Map<String, dynamic> toJson(){
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['count_all'] = this.countAll;
-    data['count_checked'] = this.countChecked;
-    data['count_unchecked'] = this.countUnChecked;
-    data['color_task'] = this.color;
-    data['icon_task'] = this.icon;
+    data['id'] = id;
+    data['name'] = name;
+    data['count_all'] = countAll;
+    data['count_checked'] = countChecked;
+    data['count_unchecked'] = countUnChecked;
+    data['color_task'] = color;
+    data['icon_task'] = icon;
     return data;
   }
 
@@ -63,11 +65,11 @@ class CheckTask {
 
   Map<String, dynamic> toJson(){
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id']      = this.id;
-    data['id_task'] = this.idTask;
-    data['name']    = this.name;
-    data['checked']   = this.checked;
-    data['created_at'] = this.createdAt;
+    data['id']      = id;
+    data['id_task'] = idTask;
+    data['name']    = name;
+    data['checked']   = checked;
+    data['created_at'] = createdAt;
     return data;
   }
 

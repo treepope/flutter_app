@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constant.dart';
-import 'package:flutter_application_1/model/task.dart';
+import 'package:flutter_application_1/models/task.dart';
 import 'package:flutter_application_1/controller/checktask_controller.dart';
 import 'package:get/get.dart';
 
@@ -26,7 +26,7 @@ class TaskCard extends StatelessWidget {
       onTap: press,
       onPanUpdate: swipe,
       child: Container(
-        margin: EdgeInsets.only(
+        margin: const EdgeInsets.only(
           right: kDefaultPaddin / 2,
           left: kDefaultPaddin / 2,
           top: kDefaultPaddin,

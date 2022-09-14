@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/model/task.dart';
+import 'package:flutter_application_1/models/task.dart';
 import 'package:flutter_application_1/constant.dart';
 import 'package:flutter_application_1/screen/component/custom_checkbox.dart';
 import 'package:flutter_application_1/screen/home/add_screen.dart';

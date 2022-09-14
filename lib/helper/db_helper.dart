@@ -1,4 +1,4 @@
-import 'package:flutter_application_1/model/task.dart';
+import 'package:flutter_application_1/models/task.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'dart:io';

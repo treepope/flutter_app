@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/helper/db_helper.dart';
-import 'package:flutter_application_1/model/task.dart';
+import 'package:flutter_application_1/models/task.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 

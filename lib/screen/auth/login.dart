@@ -1,15 +1,18 @@
-// ignore_for_file: unnecessary_new
-
+// ignore_for_file: unnecessary_new, use_build_context_synchronously
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/router.dart';
 import 'package:flutter_application_1/screen/home/home_screen.dart';
-import 'package:flutter_application_1/screen/home/joinApps.dart';
+import 'package:flutter_application_1/screen/auth/joinRegister.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_application_1/services/firebase_services.dart';
+import 'package:get/get.dart';
+import 'package:flutter_application_1/services/facebook_login.dart';
+import 'package:flutter_application_1/models/proflie.dart';
+import 'package:flutter_application_1/models/snackbar.dart';
 
 class LoginScreen extends StatefulWidget {
   dynamic user = FirebaseAuth.instance.currentUser;
@@ -19,11 +22,20 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();}
 
 class _LoginScreenState extends State<LoginScreen> { 
-  
-  static Future<User?> loginUsingEmailPassword({required String email, required String password, required BuildContext context }) async{
-    FirebaseAuth auth = FirebaseAuth.instance;
-    User? user;
-    try{
+  final formKey = GlobalKey<FormState>(); 
+  Profile profile = Profile();
+  var _obscureText = true;
+  Map<String, dynamic>? _userData;
+  AccessToken? _accessToken;
+  bool _checking = true;
+
+  static Future<User?> loginUsingEmailPassword({
+    required String email, 
+    required String password, 
+    required BuildContext context }) async {
+      FirebaseAuth auth = FirebaseAuth.instance;
+      User? user;
+    try {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);
       user = userCredential.user;
     } on FirebaseAuthException catch (e){
@@ -34,31 +46,10 @@ class _LoginScreenState extends State<LoginScreen> {
     return user;
   }
 
-  Future<FirebaseApp> _initializeFirebase() async{
+  Future<FirebaseApp> _initializeFirebase() async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
     return firebaseApp;
   }
-  
-// Future<void> loginWithGoogle(BuildContext context) async {
-//     GoogleSignIn googleSignIn = GoogleSignIn(
-//       scopes: [
-//         'https://www.googleapis.com/auth/contacts.readonly',
-//       ],
-//     );
-//     GoogleSignInAccount? user = await googleSignIn.signIn();
-//     GoogleSignInAuthentication userAuth = await user!.authentication;
-
-//     await _auth.signInWithCredential(GoogleAuthProvider.credential(
-//         idToken: userAuth.idToken, accessToken: userAuth.accessToken));
-//     // checkAuth(context); // after success route to home.
-//   }
-
-  String? _email;
-  String? _password;
-  final formKey = GlobalKey<FormState>(); 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  GoogleSignInAccount? _account;
-
 
   bool validateSave(){
     final form = formKey.currentState;
@@ -71,56 +62,101 @@ class _LoginScreenState extends State<LoginScreen> {
       // print('Form is invalid email: $_email, password: $_password');
     }
   }
+
+  void _togglePasswodView() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _checkLoggedIn();
   }
-  // void validateSubmit() async{
+
+    _checkLoggedIn() async {
+    final accessToken = await FacebookAuth.instance.accessToken;
+
+    setState(() {
+      _checking = false;
+    });
+
+      if (accessToken != null) {
+      print(accessToken.toJson());
+      final userData = await FacebookAuth.instance.getUserData();
+      _accessToken = accessToken;
+      setState(() {
+        _userData = userData;
+      });
+    } else {
+      _facebooklogin();
+    }
+  }
+
+   _facebooklogin() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+
+    if (result.status == LoginStatus.success) {
+      _accessToken = result.accessToken;
+
+      final userData = await FacebookAuth.instance.getUserData();
+      _userData = userData;
+    } else {
+      print(result.status);
+      print(result.message);
+    }
+    setState(() {
+      _checking = false;
+    });
+  }
+
+   _facebooklogout() async {
+    await FacebookAuth.instance.logOut();
+    _accessToken = null;
+    _userData = null;
+    setState(() {});
+  }
+
   @override
+  
   Widget build(BuildContext context) {
     TextEditingController _emailController = TextEditingController();
     TextEditingController _passwordController = TextEditingController();
+    
     return Scaffold(
-      // appBar: AppBar(title: Text("Register/Login"),
-      // toolbarHeight: 40,
-      // // centerTitle: true,
-      // backgroundColor: Color.fromARGB(255, 60, 145, 255),
-      // titleTextStyle: TextStyle(fontSize: 16,fontWeight: FontWeight.bold),
-      // ),
-      body: 
-      Container(padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+      body: Container(
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
       decoration: const BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/img/login-cover.png'),
-                fit: BoxFit.fitWidth,
-                alignment: Alignment.topCenter),
-                ),
-        child: Padding(padding: const EdgeInsets.fromLTRB(30, 210, 30, 20),
+        image: DecorationImage(
+          image: AssetImage('assets/img/login-cover.png'),
+          fit: BoxFit.fitWidth,
+          alignment: Alignment.topCenter,
+        ),
+      ),
+         child: Container(margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
           child: Form(key: formKey,
             child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  const Text('Welcome',style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w900,
-                      )),
-                  
-                  const Text('Sign in to continue!',style: TextStyle(
-                        fontSize: 16,
-                      )),
+                  const Padding(padding: EdgeInsets.fromLTRB(0, 150, 0, 20)),
+                  // TODO : Text Title
+                  const Text('Welcome',style: TextStyle(fontSize: 32,fontWeight: FontWeight.w900,)),
+                  const Text('Sign in to continue!',style: TextStyle(fontSize: 16,)),
                  
-                  Container(
-                    margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                    height: 20,
-                  ),
+                  Container(margin: const EdgeInsets.fromLTRB(0, 0, 0, 0), height: 20),
 
+                  // TODO : Email FormField 
                   TextFormField(
+                    autofocus: true,
+                    controller: _emailController,
                     decoration: const InputDecoration(
                       labelText: 'Email account',
+                      prefixIcon: Icon(Icons.email),
                     ),
-                    controller: _emailController,
+                    // controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     validator: MultiValidator([
                       RequiredValidator(
@@ -129,27 +165,31 @@ class _LoginScreenState extends State<LoginScreen> {
                             ]),
                   ),
                   
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  
+                  const SizedBox(height: 15),
+
+                  // TODO : Password FormField
                   TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                    ),
                     controller: _passwordController,
+                    obscureText: _obscureText,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      prefixIcon: const Icon(Icons.lock),
+                      // suffixIcon: IconButton(
+                      //   icon: Icon(
+                      //     _obscureText ? Icons.visibility : Icons.visibility_off),
+                      //   onPressed: _togglePasswodView,
+                      // ),
+                    ),
                     keyboardType: TextInputType.text,
                     validator: MultiValidator([
                       RequiredValidator(
                         errorText: "Please enter your password"),
-                      ]),
-                    obscureText: true,
+                    ]),
                   ),
                   
-                  const SizedBox(
-                    height: 15,
-                  ),
+                  const SizedBox(height: 15,),
                   
+                  // TODO : Sign up
                   InkWell(
                     child: Container(
                       margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
@@ -165,22 +205,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () async{
                           User? user = await loginUsingEmailPassword(
                             email: _emailController.text, 
-                            password: _passwordController.text, 
+                            password: _passwordController.text,
                             context: context);
-                            print(user);
+                            // print(user);
                             formKey.currentState?.reset();
                             if (user != null){
-                              Navigator.push(context,MaterialPageRoute(builder: (context) => HomeScreen()));
-                              Fluttertoast.showToast(
-                                msg: 'Login is successful',
-                                gravity: ToastGravity.BOTTOM
-                              );
+                              Get.to(HomeScreen());
+                              LoginSuccessSnackBar(context);
+                              
                             }
                             else if(user == null){
-                              Fluttertoast.showToast(
-                                msg: 'user not found!',
-                                gravity: ToastGravity.BOTTOM
-                              );
+                              UserFoundSnackBar(context);
                             }
                         },
                       ),
@@ -188,51 +223,53 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   
 
-// TODO Facebook !
-                  // InkWell(
-                  //   child: Container(
-                  //     margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  //     width: double.infinity,
-                  //     // alignment: Alignment.center,
-                  //     child: ElevatedButton(
-                  //         style: ElevatedButton.styleFrom(
-                  //           shape: new RoundedRectangleBorder(
-                  //             borderRadius: new BorderRadius.circular(10)
-                  //           ),
-                  //           // primary: Color.fromARGB(255, 255, 255, 255),
-                  //           onPrimary: Colors.black,
-                  //         ),
-                  //       onPressed: () async {},
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                  //         child: Row(
-                  //           mainAxisSize: MainAxisSize.min,
-                  //           mainAxisAlignment: MainAxisAlignment.center,
-                  //           children: const [
-                  //             Image(
-                  //               image: AssetImage("assets/img/icon/facebook-white.png"),
-                  //               height: 24,
-                  //               width: 24,
-                  //             ),
-                  //             Padding(
-                  //               padding: EdgeInsets.only(left: 24, right: 8),
-                  //               child: Text(
-                  //                 'Sign in with Facebook',
-                  //                 style: TextStyle(
-                  //                   fontSize: 18,
-                  //                   color: Color.fromARGB(255, 255, 255, 255),
-                  //                   fontWeight: FontWeight.w600,
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
+                  // TODO Facebook !
+                  InkWell(
+                    child: Container(
+                      margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                      width: double.infinity,
+                      // alignment: Alignment.center,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: new RoundedRectangleBorder(
+                              borderRadius: new BorderRadius.circular(10)
+                            ),
+                            // primary: Color.fromARGB(255, 255, 255, 255),
+                            onPrimary: Colors.black,
+                          ),
+                      onPressed: () async {
+                        // _userData != null ? _facebooklogout() : _facebooklogin();
+                      },
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Image(
+                                image: AssetImage("assets/img/icon/facebook-white.png"),
+                                height: 24,
+                                width: 24,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 24, right: 8),
+                                child: Text(
+                                  'Sign in with Facebook',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
 
-                  
+                  // TODO : Sign in W Google acc
                   InkWell(
                     child: Container(
                       margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
@@ -248,7 +285,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         onPressed: () async {
                           await FirebaseServices().signInWithGoogle();
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+                          Get.to(HomeScreen());
+                          GoogleLoginSnackBar(context);
                         },
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
@@ -280,7 +318,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
 
                   Container(
-                    margin: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                    margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                     alignment: Alignment.center,
                     child: const Text("───────────── or ─────────────",
                       style: TextStyle(
@@ -290,9 +328,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
 
+                  // TODO : Create a new acc
                   InkWell(
                     child: Container(
-                      margin: const EdgeInsets.fromLTRB(60, 30, 60, 0),
+                      margin: const EdgeInsets.fromLTRB(60, 20, 60, 0),
                       width: double.infinity,
                       height: 32,
                       child: ElevatedButton(
@@ -304,10 +343,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       child: const Text('Create new account',style: TextStyle(fontSize: 16),),
                         onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return JoinScreen();
-                          }));
+                          Get.to(JoinScreen());
                         },
                       ),
                     ),
@@ -319,5 +355,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+    
   }
 }
