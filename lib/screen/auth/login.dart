@@ -1,16 +1,13 @@
-// ignore_for_file: unnecessary_new, use_build_context_synchronously
+// ignore_for_file: unnecessary_new, use_build_context_synchronously, unnecessary_null_comparison
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/router.dart';
-import 'package:flutter_application_1/screen/home/home_screen.dart';
 import 'package:flutter_application_1/screen/auth/joinRegister.dart';
+import 'package:flutter_application_1/screen/home/nav_bar.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:form_field_validator/form_field_validator.dart';
+import 'package:form_field_validator/form_field_validator.dart';  
 import 'package:flutter_application_1/services/firebase_services.dart';
 import 'package:get/get.dart';
-import 'package:flutter_application_1/services/facebook_login.dart';
 import 'package:flutter_application_1/models/proflie.dart';
 import 'package:flutter_application_1/models/snackbar.dart';
 
@@ -36,7 +33,9 @@ class _LoginScreenState extends State<LoginScreen> {
       FirebaseAuth auth = FirebaseAuth.instance;
       User? user;
     try {
-      UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);
+      UserCredential userCredential = await auth.signInWithEmailAndPassword(
+        email: email,
+        password: password);
       user = userCredential.user;
     } on FirebaseAuthException catch (e){
       if (e.code == "user-not-found"){
@@ -56,11 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (form!.validate()) {
       form.save();
       return true;
-      // print('Form is valid email: $_email, password: $_password');
-    } else {
-      return false;
-      // print('Form is invalid email: $_email, password: $_password');
-    }
+    } else { return false; }
   }
 
   void _togglePasswodView() {
@@ -73,54 +68,53 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _checkLoggedIn();
+    // _checkLoggedIn();
   }
 
-    _checkLoggedIn() async {
-    final accessToken = await FacebookAuth.instance.accessToken;
+  //   _checkLoggedIn() async {
+  //   final accessToken = await FacebookAuth.instance.accessToken;
 
-    setState(() {
-      _checking = false;
-    });
+  //   setState(() {
+  //     _checking = false;
+  //   });
 
-      if (accessToken != null) {
-      print(accessToken.toJson());
-      final userData = await FacebookAuth.instance.getUserData();
-      _accessToken = accessToken;
-      setState(() {
-        _userData = userData;
-      });
-    } else {
-      _facebooklogin();
-    }
-  }
+  //     if (accessToken != null) {
+  //     print(accessToken.toJson());
+  //     final userData = await FacebookAuth.instance.getUserData();
+  //     _accessToken = accessToken;
+  //     setState(() {
+  //       _userData = userData;
+  //     });
+  //   } else {
+  //     _facebooklogin();
+  //   }
+  // }
 
-   _facebooklogin() async {
-    final LoginResult result = await FacebookAuth.instance.login();
+  //  _facebooklogin() async {
+  //   final LoginResult result = await FacebookAuth.instance.login();
 
-    if (result.status == LoginStatus.success) {
-      _accessToken = result.accessToken;
+  //   if (result.status == LoginStatus.success) {
+  //     _accessToken = result.accessToken;
 
-      final userData = await FacebookAuth.instance.getUserData();
-      _userData = userData;
-    } else {
-      print(result.status);
-      print(result.message);
-    }
-    setState(() {
-      _checking = false;
-    });
-  }
+  //     final userData = await FacebookAuth.instance.getUserData();
+  //     _userData = userData;
+  //   } else {
+  //     print(result.status);
+  //     print(result.message);
+  //   }
+  //   setState(() {
+  //     _checking = false;
+  //   });
+  // }
 
-   _facebooklogout() async {
-    await FacebookAuth.instance.logOut();
-    _accessToken = null;
-    _userData = null;
-    setState(() {});
-  }
+  //  _facebooklogout() async {
+  //   await FacebookAuth.instance.logOut();
+  //   _accessToken = null;
+  //   _userData = null;
+  //   setState(() {});
+  // }
 
   @override
-  
   Widget build(BuildContext context) {
     TextEditingController _emailController = TextEditingController();
     TextEditingController _passwordController = TextEditingController();
@@ -150,7 +144,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // TODO : Email FormField 
                   TextFormField(
-                    autofocus: true,
                     controller: _emailController,
                     decoration: const InputDecoration(
                       labelText: 'Email account',
@@ -162,7 +155,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       RequiredValidator(
                         errorText: "Please enter your email"),
                       EmailValidator(errorText: "Invalid email format!")
-                            ]),
+                    ]),
                   ),
                   
                   const SizedBox(height: 15),
@@ -171,9 +164,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscureText,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock),
+                      prefixIcon: Icon(Icons.lock),
                       // suffixIcon: IconButton(
                       //   icon: Icon(
                       //     _obscureText ? Icons.visibility : Icons.visibility_off),
@@ -206,17 +199,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           User? user = await loginUsingEmailPassword(
                             email: _emailController.text, 
                             password: _passwordController.text,
-                            context: context);
-                            // print(user);
+                            context: context
+                          );
+                            print(user);
                             formKey.currentState?.reset();
-                            if (user != null){
-                              Get.to(HomeScreen());
+                            if (user != null) {
+                              Get.to(() => NavBar());
                               LoginSuccessSnackBar(context);
-                              
-                            }
-                            else if(user == null){
+                            } else {
                               UserFoundSnackBar(context);
-                            }
+                            } 
                         },
                       ),
                     ),
@@ -224,50 +216,50 @@ class _LoginScreenState extends State<LoginScreen> {
                   
 
                   // TODO Facebook !
-                  InkWell(
-                    child: Container(
-                      margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                      width: double.infinity,
-                      // alignment: Alignment.center,
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(10)
-                            ),
-                            // primary: Color.fromARGB(255, 255, 255, 255),
-                            onPrimary: Colors.black,
-                          ),
-                      onPressed: () async {
-                        // _userData != null ? _facebooklogout() : _facebooklogin();
-                      },
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              Image(
-                                image: AssetImage("assets/img/icon/facebook-white.png"),
-                                height: 24,
-                                width: 24,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 24, right: 8),
-                                child: Text(
-                                  'Sign in with Facebook',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Color.fromARGB(255, 255, 255, 255),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  // InkWell(
+                  //   child: Container(
+                  //     margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  //     width: double.infinity,
+                  //     // alignment: Alignment.center,
+                  //     child: ElevatedButton(
+                  //         style: ElevatedButton.styleFrom(
+                  //           shape: new RoundedRectangleBorder(
+                  //             borderRadius: new BorderRadius.circular(10)
+                  //           ),
+                  //           // primary: Color.fromARGB(255, 255, 255, 255),
+                  //           onPrimary: Colors.black,
+                  //         ),
+                  //     onPressed: () async {
+                  //       // _userData != null ? _facebooklogout() : _facebooklogin();
+                  //     },
+                  //       child: Padding(
+                  //         padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                  //         child: Row(
+                  //           mainAxisSize: MainAxisSize.min,
+                  //           mainAxisAlignment: MainAxisAlignment.center,
+                  //           children: const [
+                  //             Image(
+                  //               image: AssetImage("assets/img/icon/facebook-white.png"),
+                  //               height: 24,
+                  //               width: 24,
+                  //             ),
+                  //             Padding(
+                  //               padding: EdgeInsets.only(left: 24, right: 8),
+                  //               child: Text(
+                  //                 'Sign in with Facebook',
+                  //                 style: TextStyle(
+                  //                   fontSize: 18,
+                  //                   color: Color.fromARGB(255, 255, 255, 255),
+                  //                   fontWeight: FontWeight.w600,
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
 
                   // TODO : Sign in W Google acc
                   InkWell(
@@ -280,12 +272,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             shape: new RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(10)
                             ),
-                            primary: Color.fromARGB(255, 255, 255, 255),
+                            primary: const Color.fromARGB(255, 255, 255, 255),
                             onPrimary: Colors.black,
                           ),
                         onPressed: () async {
                           await FirebaseServices().signInWithGoogle();
-                          Get.to(HomeScreen());
+                          Get.to(() => NavBar());
                           GoogleLoginSnackBar(context);
                         },
                         child: Padding(

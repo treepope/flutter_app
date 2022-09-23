@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +62,7 @@ class NavPage extends StatelessWidget {
         title: const Text('Log out'),
         onTap: () async {
           await FirebaseServices().googleSignOut();
-          Get.to(() => HomeScreen());
+          Get.to(() => LoginScreen(User));
           LogoutSuccessSnackBar(context);
         },
       ),

@@ -1,7 +1,6 @@
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/screen/auth/getUsername.dart';
 import 'package:flutter_application_1/screen/auth/register.dart';
 import 'package:get/get.dart';
 
@@ -60,7 +59,7 @@ class _JoinScreenState extends State<JoinScreen> {
                       ),
                     child: Text('Next',style: TextStyle(fontSize: 16),),
                       onPressed: () {
-                        Get.to(GetUserName());
+                        Get.to(RegisterScreen());
                       },
                     ),
                   ),
