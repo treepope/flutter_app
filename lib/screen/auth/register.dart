@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/proflie.dart';
 import 'package:flutter_application_1/models/snackbar.dart';
+import 'package:flutter_application_1/screen/auth/emailVerify.dart';
 import 'package:flutter_application_1/screen/auth/login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -69,18 +70,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                         Container(margin: const EdgeInsets.fromLTRB(0, 5, 0, 20),height: 20),
                         
-                        TextFormField(
-                          decoration: const InputDecoration(labelText: 'username'),
-                          controller: usernameController,
-                          keyboardType: TextInputType.text,
-                          validator: MultiValidator([
-                            RequiredValidator(
-                              errorText: "Please enter your name"),
-                          ]),
-                          onSaved: (String? username) {
-                            profile.username = username;
-                          },
-                        ),
+                        // TextFormField(
+                        //   decoration: const InputDecoration(labelText: 'username'),
+                        //   controller: usernameController,
+                        //   keyboardType: TextInputType.text,
+                        //   validator: MultiValidator([
+                        //     RequiredValidator(
+                        //       errorText: "Please enter your name"),
+                        //   ]),
+                        //   onSaved: (String? username) {
+                        //     profile.username = username;
+                        //   },
+                        // ),
 
                         const SizedBox(height: 15),
 
@@ -170,6 +171,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           email: profile.email!,
                                           password: profile.password!).then((value) {
                                     formKey.currentState?.reset();
+                                    // Get.to(() => const emailVerify());
                                     Get.to(() => LoginScreen(User));
                                     CreateAccountSnackBar(context);
                                   });

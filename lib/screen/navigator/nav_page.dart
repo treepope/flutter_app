@@ -7,6 +7,10 @@ import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_application_1/screen/home/home_screen.dart';
 import 'package:flutter_application_1/screen/auth/login.dart';
+import 'package:flutter_application_1/screen/navigator/account/account_home.dart';
+import 'package:flutter_application_1/screen/navigator/notes/note_home.dart';
+import 'package:flutter_application_1/screen/navigator/settings/settings_home.dart';
+import 'package:flutter_application_1/screen/navigator/tasks/tasks_home.dart';
 import 'package:flutter_application_1/services/firebase_services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/models/snackbar.dart';
@@ -38,22 +42,29 @@ class NavPage extends StatelessWidget {
       ListTile(
         leading: const Icon(Icons.account_circle_rounded),
         title: const Text('My Account'),
-        onTap: () {} ),
+        onTap: () {
+          Get.to(const AccountPage());
+        } ),
       ListTile(
         leading: const Icon(Icons.my_library_books_rounded),
         title: const Text('Note'),
-        onTap: () {},
+        onTap: () {
+           Get.to(const NotePage());
+        },
       ),
       ListTile(
         leading: const Icon(Icons.done_all_rounded),
-        
         title: const Text('Done list'),
-        onTap: () {},
+        onTap: () {
+           Get.to(const TasksPage());
+        },
       ),
       ListTile(
         leading: const Icon(Icons.settings),
         title: const Text('Settings'),
-        onTap: () {},
+        onTap: () {
+           Get.to(const SettingsPage());
+        },
       ),
 
       // TODO: Logout

@@ -246,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   //             Padding(
                   //               padding: EdgeInsets.only(left: 24, right: 8),
                   //               child: Text(
-                  //                 'Sign in with Facebook',
+                  //                 'Sign up with Facebook',
                   //                 style: TextStyle(
                   //                   fontSize: 18,
                   //                   color: Color.fromARGB(255, 255, 255, 255),
@@ -294,7 +294,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Padding(
                                 padding: EdgeInsets.only(left: 24, right: 8),
                                 child: Text(
-                                  'Sign in with Google',
+                                  'Sign up with Google',
                                   style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.black54,
