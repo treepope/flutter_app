@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/models/proflie.dart';
 import 'package:flutter_application_1/models/snackbar.dart';
-import 'package:flutter_application_1/screen/auth/emailVerify.dart';
 import 'package:flutter_application_1/screen/auth/login.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -104,6 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                         TextFormField(
                           obscureText: _obscureText,
+                          maxLength: 12,
                           decoration: const InputDecoration(
                             labelText: 'Password',
                           ),
@@ -123,6 +123,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         
                         TextFormField(
                           obscureText: _obscureText,
+                          maxLength: 12,
                           decoration: InputDecoration(
                             labelText: 'confirm password',
                             // prefixIcon: const Icon(Icons.lock),

@@ -50,7 +50,7 @@ CREATE TABLE $tableNotes (
   ${NoteFields.note_id} $integerType,
   ${NoteFields.title} $textType,
   ${NoteFields.content} $textType,
-  ${NoteFields.num_pages} $integerType,
+  ${NoteFields.description} $integerType,
   ${NoteFields.publication_date} $textType
 )
 ''');
@@ -65,7 +65,7 @@ CREATE TABLE $tableNotes (
   }
  
   // คำสั่งสำหรับแสดงข้อมูลหนังสือตามค่า id ที่ส่งมา
-  Future<Note> readBook(int id) async {
+  Future<Note> readNote(int id) async {
     final db = await instance.database; // อ้างอิงฐานข้อมูล
  
     // ทำคำสั่งคิวรี่ข้อมูลตามเงื่อนไข 

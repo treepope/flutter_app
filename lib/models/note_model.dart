@@ -5,7 +5,7 @@ final String tableNotes = 'Notes';
 class NoteFields {
   // สร้างเป็นลิสรายการสำหรับคอลัมน์ฟิลด์
   static final List<String> values = [
-    id, note_id, title, type, content, num_pages, publication_date
+    id, note_id, title, type, content, description, publication_date
   ];
  
   // กำหนดแต่ละฟิลด์ของตาราง ต้องเป็น String ทั้งหมด
@@ -14,7 +14,7 @@ class NoteFields {
   static final String title = 'title';
   static final String type = 'type';
   static final String content = 'content';
-  static final String num_pages = 'num_pages';
+  static final String description = 'description';
   static final String publication_date = 'publication_date';
 }
  
@@ -25,7 +25,7 @@ class Note {
   final String title;
   final String type;
   final String content;
-  final int num_pages;
+  final String description;
   final DateTime publication_date;
  
   // constructor
@@ -35,7 +35,7 @@ class Note {
     required this.title,
     required this.type,
     required this.content,
-    required this.num_pages,
+    required this.description,
     required this.publication_date,
   });
  
@@ -46,17 +46,16 @@ class Note {
    String? title,
    String? type,
    String? content,
-   int? num_pages,
+   String? description,
    DateTime? publication_date,
-  }) =>
-    Note(
-      id: id ?? this.id, 
-      note_id: note_id ?? this.note_id,
-      title: title ?? this.title,
-      type: type ?? this.type,
-      content: content ?? this.content,
-      num_pages: num_pages ?? this.num_pages,
-      publication_date: publication_date ?? this.publication_date,
+  }) => Note(
+          id: id ?? this.id, 
+          note_id: note_id ?? this.note_id,
+          title: title ?? this.title,
+          type: type ?? this.type,
+          content: content ?? this.content,
+          description: description ?? this.description,
+          publication_date: publication_date ?? this.publication_date,
     );
  
   // สำหรับแปลงข้อมูลจาก Json เป็น Note object
@@ -67,7 +66,7 @@ class Note {
       title: json[NoteFields.title] as String,
       type: json[NoteFields.type] as String,
       content: json[NoteFields.type] as String,
-      num_pages: json[NoteFields.num_pages] as int,
+      description:json[NoteFields.type] as String,
       publication_date: DateTime.parse(json[NoteFields.publication_date] as String),
     );
  
@@ -78,7 +77,7 @@ class Note {
     NoteFields.title: title,
     NoteFields.type: type,
     NoteFields.content: content,
-    NoteFields.num_pages: num_pages,
+    NoteFields.description: description,
     NoteFields.publication_date: publication_date.toIso8601String(),
   };
  
