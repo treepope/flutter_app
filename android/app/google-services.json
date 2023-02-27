@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "374678815048",
+    "firebase_url": "https://login-app-a4e43-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "login-app-a4e43",
     "storage_bucket": "login-app-a4e43.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "374678815048-0nt6so9p4dh9buf1dqeuba5ckhgjbm56.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.flutter_application_1",
+            "certificate_hash": "6aa4d289c46b742995fa701d2db9a1c3428fe238"
+          }
+        },
         {
           "client_id": "374678815048-tjqauknv4p46hstk2osaa83t56q0coti.apps.googleusercontent.com",
           "client_type": 3

@@ -12,10 +12,32 @@ import 'package:flutter_application_1/screen/navigator/notes/note_home.dart';
 import 'package:flutter_application_1/screen/navigator/settings/settings_home.dart';
 import 'package:flutter_application_1/screen/navigator/tasks/tasks_home.dart';
 import 'package:flutter_application_1/services/firebase_services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/models/snackbar.dart';
 
+import '../../main.dart';
+
 class NavPage extends StatelessWidget {
+// notification logout
+Future<void> _showNotification_Logout() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails(
+      'Do_noti_001' , 'General Notifications', 'noti',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'tricker'
+    );
+
+    const NotificationDetails platfromChannelDetails = 
+    NotificationDetails(
+      android: androidNotificationDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      0, 'Log out', '', platfromChannelDetails);
+  }
+
 
   @override
   Widget build(BuildContext context) => Drawer(
@@ -74,6 +96,7 @@ class NavPage extends StatelessWidget {
         onTap: () async {
           await FirebaseServices().googleSignOut();
           Get.to(() => LoginScreen(User));
+          _showNotification_Logout();
           LogoutSuccessSnackBar(context);
         },
       ),

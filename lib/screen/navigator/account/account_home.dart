@@ -10,6 +10,15 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
+    String greeting(){
+      var hour  = DateTime.now().hour;
+      print(hour);
+      if (hour < 12) { return "Morning";
+      } else if(hour < 15) { return "Afternoon";
+      } else if(hour < 18){ return "Evening";
+      } else { return "Night"; } 
+    }
+
   @override
   Widget build(BuildContext context) => Scaffold(
     body: Center(child: Padding(
@@ -24,15 +33,13 @@ class _AccountPageState extends State<AccountPage> {
         // Image.network(FirebaseAuth.instance.currentUser!.photoURL!),
         const SizedBox(height: 15),
 
-        Text('Hello, ${FirebaseAuth.instance.currentUser!.displayName}',style: const TextStyle(fontSize: 32,fontWeight: FontWeight.bold)),
+        Text('Good ${greeting()}, ${FirebaseAuth.instance.currentUser!.displayName}',style: const TextStyle(fontSize: 32,fontWeight: FontWeight.bold)),
         
         const SizedBox(height: 5),
 
         Text('${FirebaseAuth.instance.currentUser!.email}',style: const TextStyle(fontSize: 22)),
 
         const SizedBox(height: 15),
-
-        Text('${FirebaseAuth.instance.currentUser!.providerData}',style: const TextStyle(fontSize: 16)),
 
       ],),
     ),),

@@ -1,30 +1,151 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screen/navigator/notes/note_form.dart';
 import 'package:get/get.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class NotePage extends StatefulWidget {
   static const routeName = '/note';
 
   const NotePage({Key? key}) : super(key: key);
-  
+
   @override
   State<NotePage> createState() => _NotePageState();
 }
 
 class _NotePageState extends State<NotePage> {
+  dynamic dbRef = FirebaseDatabase.instance.ref().child('Note');
+  DatabaseReference reference = FirebaseDatabase.instance.ref().child('Note');
+  // Dialog function
+  void _showDialog({@required String? text}) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
+          elevation: 0,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 10,
+            ),
+            child: IntrinsicWidth(
+              child: IntrinsicHeight(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    const Text(
+                      "Note Details",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      text!,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: ElevatedButton(
+                        
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: const Text("OK"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
-  void initState(){}
-  
+  void initState() {
+    super.initState();
+  }
+
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(itemBuilder: ((context, index) => 
-        const Card(
-          elevation: 5,
-          margin: EdgeInsets.symmetric(vertical: 10 ,horizontal: 20),
-          child: ListTile(title: Text("Menu"),subtitle: Text('23-02-2023'),),
-        ))),
+      // appBar: AppBar(title: const Text("Note"),
+      //           toolbarHeight: 40,
+      //           // centerTitle: true,
+      //           backgroundColor: const Color.fromARGB(255, 60, 145, 255),
+      //           titleTextStyle: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
+      //       ),
+      body: StreamBuilder(
+          stream: FirebaseFirestore.instance.collection("Note").snapshots(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            return ListView(
+              children: snapshot.data!.docs.map((document) {
+                return Card(
+                  elevation: 16,
+                  shadowColor: Colors.grey,
+                  margin: const EdgeInsets.all(20),
+                  child: InkWell(
+                    splashColor: Colors.blue.withAlpha(30),
+                    onLongPress: () {
+                      _showDialog(
+                          text: 'content : ${document['content'] + '\n' + 'description : ' + document['description']}');
+                      print("tapped");
+                    },
+                    child: Container(
+                      width: 100.0,
+                      height: 70.0,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                                  document['title'] + '\n' + document['type'] + '\n' ),
+                            
+
+                            // GestureDetector(
+                            //   onTap: () {
+                            //     reference.child(document['content']).remove();
+                            //   },
+                            //   child: Row(
+                            //     children: [
+                            //       Icon(Icons.delete,color: Colors.red[700],)
+                            //     ],
+                            //   ),
+                            // ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
+          }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Get.to(() => NoteForm());

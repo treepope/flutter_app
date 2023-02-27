@@ -15,7 +15,6 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  String? username;
   Profile profile = Profile();
   final formKey = GlobalKey<FormState>();
   final Future<FirebaseApp> firebase = Firebase.initializeApp();
@@ -24,6 +23,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmpasswordController = TextEditingController();
   var _obscureText = true;
+
+  
 
   void _togglePasswodView() {
     setState(() {
@@ -69,18 +70,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                         Container(margin: const EdgeInsets.fromLTRB(0, 5, 0, 20),height: 20),
                         
-                        // TextFormField(
-                        //   decoration: const InputDecoration(labelText: 'username'),
-                        //   controller: usernameController,
-                        //   keyboardType: TextInputType.text,
-                        //   validator: MultiValidator([
-                        //     RequiredValidator(
-                        //       errorText: "Please enter your name"),
-                        //   ]),
-                        //   onSaved: (String? username) {
-                        //     profile.username = username;
-                        //   },
-                        // ),
+                        TextFormField(
+                          decoration: const InputDecoration(labelText: 'username'),
+                          controller: usernameController,
+                          keyboardType: TextInputType.text,
+                          validator: MultiValidator([
+                            RequiredValidator(
+                              errorText: "Please enter your name"),
+                          ]),
+                          onSaved: (String? username) {
+                            profile.username = username;
+                          },
+                        ),
 
                         const SizedBox(height: 15),
 
@@ -175,6 +176,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     // Get.to(() => const emailVerify());
                                     Get.to(() => LoginScreen(User));
                                     CreateAccountSnackBar(context);
+                                 
                                   });
 
                                 } on FirebaseAuthException catch (e) {

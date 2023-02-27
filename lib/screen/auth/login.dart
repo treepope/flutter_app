@@ -1,15 +1,17 @@
-// ignore_for_file: unnecessary_new, use_build_context_synchronously, unnecessary_null_comparison
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screen/auth/joinRegister.dart';
 import 'package:flutter_application_1/screen/home/nav_bar.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:form_field_validator/form_field_validator.dart';  
 import 'package:flutter_application_1/services/firebase_services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/models/proflie.dart';
 import 'package:flutter_application_1/models/snackbar.dart';
+
+import '../../main.dart';
 
 class LoginScreen extends StatefulWidget {
   dynamic user = FirebaseAuth.instance.currentUser;
@@ -25,6 +27,45 @@ class _LoginScreenState extends State<LoginScreen> {
   Map<String, dynamic>? _userData;
   AccessToken? _accessToken;
   bool _checking = true;
+
+  // notification google
+Future<void> _showNotification_Google() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails(
+      'Do_noti_001' , 'General Notifications', 'noti',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'tricker'
+    );
+
+    const NotificationDetails platfromChannelDetails = 
+    NotificationDetails(
+      android: androidNotificationDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      0, 'Hello', '${FirebaseAuth.instance.currentUser!.displayName}', platfromChannelDetails);
+  }
+
+// notification signup
+Future<void> _showNotification_SignUp() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails(
+      'Do_noti_001' , 'General Notifications', 'noti',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'tricker'
+    );
+
+    const NotificationDetails platfromChannelDetails = 
+    NotificationDetails(
+      android: androidNotificationDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      0, 'Hello', '${FirebaseAuth.instance.currentUser!.email}', platfromChannelDetails);
+  }
+
 
   static Future<User?> loginUsingEmailPassword({
     required String email, 
@@ -68,51 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // _checkLoggedIn();
   }
-
-  //   _checkLoggedIn() async {
-  //   final accessToken = await FacebookAuth.instance.accessToken;
-
-  //   setState(() {
-  //     _checking = false;
-  //   });
-
-  //     if (accessToken != null) {
-  //     print(accessToken.toJson());
-  //     final userData = await FacebookAuth.instance.getUserData();
-  //     _accessToken = accessToken;
-  //     setState(() {
-  //       _userData = userData;
-  //     });
-  //   } else {
-  //     _facebooklogin();
-  //   }
-  // }
-
-  //  _facebooklogin() async {
-  //   final LoginResult result = await FacebookAuth.instance.login();
-
-  //   if (result.status == LoginStatus.success) {
-  //     _accessToken = result.accessToken;
-
-  //     final userData = await FacebookAuth.instance.getUserData();
-  //     _userData = userData;
-  //   } else {
-  //     print(result.status);
-  //     print(result.message);
-  //   }
-  //   setState(() {
-  //     _checking = false;
-  //   });
-  // }
-
-  //  _facebooklogout() async {
-  //   await FacebookAuth.instance.logOut();
-  //   _accessToken = null;
-  //   _userData = null;
-  //   setState(() {});
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -278,6 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () async {
                           await FirebaseServices().signInWithGoogle();
                           Get.to(() => NavBar());
+                          _showNotification_Google();
                           GoogleLoginSnackBar(context);
                         },
                         child: Padding(

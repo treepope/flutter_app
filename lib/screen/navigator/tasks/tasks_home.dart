@@ -9,7 +9,8 @@ class TasksPage extends StatefulWidget {
 
 class _TasksPageState extends State<TasksPage> {
   @override
-  Widget build(BuildContext context) => const Scaffold(
-    body: Center(child: Text('Tasks',style: TextStyle(fontSize: 60)),),
-  );
+  Widget build(BuildContext context) {
+    return Scaffold();
+  }
+  
 }

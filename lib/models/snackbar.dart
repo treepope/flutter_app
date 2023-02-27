@@ -2,7 +2,6 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/screen/auth/login.dart';
 // TODO : var setup
 var success = Colors.green;
 var error = Colors.red; 
@@ -64,6 +63,26 @@ var padding = EdgeInsets.all(20);
       final snackBar = SnackBar(
         content: Text('Create account is successful!'),
         backgroundColor: success,
+        padding: padding,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+// ! : Add data is successful
+  void AddDataSnackBar(BuildContext context) {
+      final snackBar = SnackBar(
+        content: Text('Data is added'),
+        backgroundColor: success,
+        padding: padding,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  // ! : Null data
+  void NullDataSnackBar(BuildContext context) {
+      final snackBar = SnackBar(
+        content: Text('Data is added'),
+        backgroundColor: error,
         padding: padding,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);

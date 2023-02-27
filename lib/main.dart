@@ -4,9 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screen/auth/login.dart';
 import 'package:get/get.dart';
 import "package:flutter_application_1/router.dart";
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-void main() async {
+ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = 
+    FlutterLocalNotificationsPlugin();
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  const AndroidInitializationSettings initializationSettingsAndroid = 
+    AndroidInitializationSettings("@mipmap/ic_launcher");
+
+  final InitializationSettings initializationSettings =
+    InitializationSettings(
+      android: initializationSettingsAndroid
+    );
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
