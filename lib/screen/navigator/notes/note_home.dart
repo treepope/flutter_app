@@ -15,8 +15,7 @@ class NotePage extends StatefulWidget {
 }
 
 class _NotePageState extends State<NotePage> {
-  dynamic dbRef = FirebaseDatabase.instance.ref().child('Note');
-  DatabaseReference reference = FirebaseDatabase.instance.ref().child('Note');
+  
   // Dialog function
   void _showDialog({@required String? text}) {
     showDialog(
@@ -89,12 +88,6 @@ class _NotePageState extends State<NotePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: const Text("Note"),
-      //           toolbarHeight: 40,
-      //           // centerTitle: true,
-      //           backgroundColor: const Color.fromARGB(255, 60, 145, 255),
-      //           titleTextStyle: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
-      //       ),
       body: StreamBuilder(
           stream: FirebaseFirestore.instance.collection("Note").snapshots(),
           builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -121,10 +114,13 @@ class _NotePageState extends State<NotePage> {
                       height: 70.0,
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
-                        child: Row(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                                  document['title'] + '\n' + document['type'] + '\n' ),
+                            Text('${document['title']}', style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+                            const SizedBox(height: 5,),
+                            Text('Type : ${document['type']}', style: TextStyle(fontSize: 16,fontWeight: FontWeight.bold,color: Colors.grey),),
                             
 
                             // GestureDetector(

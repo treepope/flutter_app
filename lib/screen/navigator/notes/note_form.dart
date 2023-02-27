@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screen/navigator/notes/note_home.dart';
+import 'package:flutter_application_1/screen/navigator/notes/note_home_new.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/models/note.dart';
@@ -21,8 +21,13 @@ class _NoteFormState extends State<NoteForm> {
   final formKey = GlobalKey<FormState>();
   final dropdownFormKey = GlobalKey<FormState>();
   final Future<FirebaseApp> firebase = Firebase.initializeApp();
-  final CollectionReference noteCollection =
-      FirebaseFirestore.instance.collection('Note');
+  final CollectionReference noteCollection = FirebaseFirestore.instance.collection('Note');
+  late DatabaseReference dbRef;
+
+  final TextEditingController titleController = TextEditingController();
+  late TextEditingController typeController = TextEditingController();  
+  final TextEditingController contentController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController(); 
 
   String? _selectedVal = null;
   _NoteFormState() {
@@ -44,6 +49,12 @@ class _NoteFormState extends State<NoteForm> {
     "Education",
     "Secret",
   ];
+  @override
+  void initState() {
+    super.initState();
+    dbRef = FirebaseDatabase.instance.ref().child('Note');
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +96,7 @@ class _NoteFormState extends State<NoteForm> {
                         const SizedBox(height: 15),
 
                         TextFormField(
+                          controller: titleController,
                           decoration: const InputDecoration(
                             labelText: "Title",
                           ),
@@ -97,54 +109,66 @@ class _NoteFormState extends State<NoteForm> {
 
                         const SizedBox(height: 15),
 
-                        // TODO DropdownButton *
-                        DropdownButtonFormField(
-                          isExpanded: true,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
-                          value: _selectedVal,
-                          items: _menuList
-                              .map((e) => DropdownMenuItem(
-                                    child: Text(e),
-                                    value: e,
-                                  ))
-                              .toList(),
-                          onChanged: (val) {
-                            setState(() {
-                              _selectedVal = val as String;
-                            });
-                          },
+                        TextFormField(
+                          controller: typeController,
+                          decoration: const InputDecoration(
+                            labelText: "Type",
+                          ),
+                          validator: RequiredValidator(
+                              errorText: "Please enter type"),
                           onSaved: (String? type) {
                             note.type = type;
                           },
-                          icon: const Icon(
-                            Icons.arrow_drop_down_circle,
-                            color: Colors.white,
-                          ),
-                          menuMaxHeight: 200,
-                          dropdownColor: Colors.lightBlue,
-                          decoration: InputDecoration(
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.blue, width: 2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            border: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.blue, width: 2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            filled: true,
-                            fillColor: Colors.blueAccent,
-                          ),
-                          // validator: (value) => value == null ? "Select a Type" : null,
                         ),
+                        // TODO DropdownButton *
+                        // DropdownButtonFormField(
+                        //   isExpanded: true,
+                        //   style: const TextStyle(
+                        //       color: Colors.white,
+                        //       fontSize: 16,
+                        //       fontWeight: FontWeight.bold),
+                        //   value: _selectedVal,
+                        //   items: _menuList
+                        //       .map((e) => DropdownMenuItem(
+                        //             child: Text(e),
+                        //             value: e,
+                        //           ))
+                        //       .toList(),
+                        //   onChanged: (val) {
+                        //     setState(() {
+                        //       _selectedVal = val as String;
+                        //     });
+                        //   },
+                        //   onSaved: (String? type) {
+                        //     note.type = type;
+                        //   },
+                        //   icon: const Icon(
+                        //     Icons.arrow_drop_down_circle,
+                        //     color: Colors.white,
+                        //   ),
+                        //   menuMaxHeight: 200,
+                        //   dropdownColor: Colors.lightBlue,
+                        //   decoration: InputDecoration(
+                        //     enabledBorder: OutlineInputBorder(
+                        //       borderSide: const BorderSide(
+                        //           color: Colors.blue, width: 2),
+                        //       borderRadius: BorderRadius.circular(20),
+                        //     ),
+                        //     border: OutlineInputBorder(
+                        //       borderSide: const BorderSide(
+                        //           color: Colors.blue, width: 2),
+                        //       borderRadius: BorderRadius.circular(20),
+                        //     ),
+                        //     filled: true,
+                        //     fillColor: Colors.blueAccent,
+                        //   ),
+                        //   // validator: (value) => value == null ? "Select a Type" : null,
+                        // ),
 
                         const SizedBox(height: 15),
 
                         TextFormField(
+                          controller: contentController,
                           style: const TextStyle(height: 1.5),
                           decoration: const InputDecoration(
                             labelText: "Content",
@@ -162,6 +186,7 @@ class _NoteFormState extends State<NoteForm> {
                         const SizedBox(height: 15),
 
                         TextFormField(
+                          controller: descriptionController,
                           style: const TextStyle(height: 1.5),
                           decoration: const InputDecoration(
                             labelText: "Description",
@@ -191,15 +216,22 @@ class _NoteFormState extends State<NoteForm> {
                               style: TextStyle(fontSize: 16),
                             ),
                             onPressed: () async {
+                              
+
                               if (formKey.currentState!.validate()) {
+                                Map<String, String> notes = {
+                                  'title': titleController.text,
+                                  'type' : typeController.text,
+                                  'content': contentController.text,
+                                  'description': descriptionController.text,
+                                };
+                                dbRef.push().set(notes);
                                 formKey.currentState?.save();
                                 noteCollection.add({
-                                  "user_id": note.user_id,
                                   "title": note.title,
                                   "type": note.type,
                                   "content": note.content,
                                   "description": note.description,
-                                  "date": note.date,
                                   "create": DateTime.now()
                                 });
 
