@@ -107,7 +107,7 @@ class _NotePageState extends State<TasksPage> {
                   child: InkWell(
                     splashColor: Colors.blue.withAlpha(30),
                     onLongPress: () {},
-                    child: Container(
+                    child: SizedBox(
                       width: 100.0,
                       height: 70.0,
                       child: Padding(
@@ -116,14 +116,14 @@ class _NotePageState extends State<TasksPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            CheckboxListTile(
-                              title: Text('${document['title']}'),
-                              subtitle: Text('${document['subtitle']}'),
-                              value: isChecked,
-                              onChanged: (value) {
-                                setState(() => isChecked = value!);
-                              },
-                            ),
+                            // CheckboxListTile(
+                            //   title: Text('title'),
+                            //   subtitle: Text('content'),
+                            //   value: isChecked,
+                            //   onChanged: (value) {
+                            //     setState(() => isChecked = value!);
+                            //   },
+                            // ),
                           ],
                         ),
                       ),

@@ -57,7 +57,7 @@ dependencies:
   intl: ^0.17.0
   fluttericon: ^2.0.0
   http: ^0.13.4
-  flutter_facebook_auth: ^4.4.1+1
+  flutter_facebook_auth: ^5.0.8
   fab_circular_menu: ^1.0.2
   firebase_messaging: ^14.2.5
   flutter_local_notifications: ^8.2.0

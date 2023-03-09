@@ -24,9 +24,10 @@ class _LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>(); 
   Profile profile = Profile();
   var _obscureText = true;
-  Map<String, dynamic>? _userData;
-  AccessToken? _accessToken;
-  bool _checking = true;
+
+  // * Facebook auth var
+  Map? _userData;
+  
 
   // notification google
 Future<void> _showNotification_Google() async {
@@ -45,6 +46,25 @@ Future<void> _showNotification_Google() async {
 
     await flutterLocalNotificationsPlugin.show(
       0, 'Hello', '${FirebaseAuth.instance.currentUser!.displayName}', platfromChannelDetails);
+  }
+
+  // notification facebook
+Future<void> _showNotification_Facebook() async {
+    const AndroidNotificationDetails androidNotificationDetails =
+    AndroidNotificationDetails(
+      'Do_noti_001' , 'General Notifications', 'noti',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'tricker'
+    );
+
+    const NotificationDetails platfromChannelDetails = 
+    NotificationDetails(
+      android: androidNotificationDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      0, 'Hello', 'Treepope Sawatsuntisuk', platfromChannelDetails);
   }
 
 // notification signup
@@ -104,6 +124,7 @@ Future<void> _showNotification_SignUp() async {
       _obscureText = !_obscureText;
     });
   }
+
 
   @override
   void initState() {
@@ -187,8 +208,8 @@ Future<void> _showNotification_SignUp() async {
                       height: 40,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(10)
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)
                           )
                         ),
                       child: const Text('Sign up',style: TextStyle(fontSize: 18 ),),
@@ -213,50 +234,64 @@ Future<void> _showNotification_SignUp() async {
                   
 
                   // TODO Facebook !
-                  // InkWell(
-                  //   child: Container(
-                  //     margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
-                  //     width: double.infinity,
-                  //     // alignment: Alignment.center,
-                  //     child: ElevatedButton(
-                  //         style: ElevatedButton.styleFrom(
-                  //           shape: new RoundedRectangleBorder(
-                  //             borderRadius: new BorderRadius.circular(10)
-                  //           ),
-                  //           // primary: Color.fromARGB(255, 255, 255, 255),
-                  //           onPrimary: Colors.black,
-                  //         ),
-                  //     onPressed: () async {
-                  //       // _userData != null ? _facebooklogout() : _facebooklogin();
-                  //     },
-                  //       child: Padding(
-                  //         padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                  //         child: Row(
-                  //           mainAxisSize: MainAxisSize.min,
-                  //           mainAxisAlignment: MainAxisAlignment.center,
-                  //           children: const [
-                  //             Image(
-                  //               image: AssetImage("assets/img/icon/facebook-white.png"),
-                  //               height: 24,
-                  //               width: 24,
-                  //             ),
-                  //             Padding(
-                  //               padding: EdgeInsets.only(left: 24, right: 8),
-                  //               child: Text(
-                  //                 'Sign up with Facebook',
-                  //                 style: TextStyle(
-                  //                   fontSize: 18,
-                  //                   color: Color.fromARGB(255, 255, 255, 255),
-                  //                   fontWeight: FontWeight.w600,
-                  //                 ),
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
+                  InkWell(
+                    child: Container(
+                      margin: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                      width: double.infinity,
+                      // alignment: Alignment.center,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)
+                            ),
+                            // primary: Color.fromARGB(255, 255, 255, 255),
+                            onPrimary: Colors.black,
+                          ),
+                      onPressed: () async {
+                        final result = await FacebookAuth.i.login(
+                          permissions: ["public_profile", "email"]
+                        );
+
+                        if (result.status == LoginStatus.success) {
+                          final requestData = await FacebookAuth.i.getUserData(
+                            fields: "email, name",
+                          );
+                          setState(() {
+                          _userData = requestData;
+                          });
+                        }
+                        _showNotification_Facebook();
+                        FacebookLoginSnackBar(context);
+                        Get.to(() => NavBar());
+                      },
+                        child: const Padding(
+                          padding:  EdgeInsets.fromLTRB(0, 8, 0, 8),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children:  [
+                              Image(
+                                image: AssetImage("assets/img/icon/facebook-white.png"),
+                                height: 24,
+                                width: 24,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 24, right: 8),
+                                child: Text(
+                                  'Sign up with Facebook',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
 
                   // TODO : Sign in W Google acc
                   InkWell(
@@ -266,8 +301,8 @@ Future<void> _showNotification_SignUp() async {
                       width: double.infinity,
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            shape: new RoundedRectangleBorder(
-                              borderRadius: new BorderRadius.circular(10)
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)
                             ),
                             primary: const Color.fromARGB(255, 255, 255, 255),
                             onPrimary: Colors.black,
@@ -278,12 +313,12 @@ Future<void> _showNotification_SignUp() async {
                           _showNotification_Google();
                           GoogleLoginSnackBar(context);
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                        child: const Padding(
+                          padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Image(
                                 image: AssetImage("assets/img/icon/google.png"),
                                 height: 24,
@@ -327,8 +362,8 @@ Future<void> _showNotification_SignUp() async {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           primary: const Color.fromARGB(255, 23, 202, 77),
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           )
                         ),
                       child: const Text('Create new account',style: TextStyle(fontSize: 16),),

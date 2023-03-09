@@ -8,10 +8,12 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_application_1/screen/home/home_screen.dart';
 import 'package:flutter_application_1/screen/auth/login.dart';
 import 'package:flutter_application_1/screen/navigator/account/account_home.dart';
+import 'package:flutter_application_1/screen/navigator/notes/note_fetchData.dart';
 import 'package:flutter_application_1/screen/navigator/notes/note_home.dart';
 import 'package:flutter_application_1/screen/navigator/settings/settings_home.dart';
 import 'package:flutter_application_1/screen/navigator/tasks/tasks_home.dart';
 import 'package:flutter_application_1/services/firebase_services.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/models/snackbar.dart';
@@ -19,6 +21,9 @@ import 'package:flutter_application_1/models/snackbar.dart';
 import '../../main.dart';
 
 class NavPage extends StatelessWidget {
+// * Facebook auth var
+Map? _userData;
+
 // notification logout
 Future<void> _showNotification_Logout() async {
     const AndroidNotificationDetails androidNotificationDetails =
@@ -71,7 +76,7 @@ Future<void> _showNotification_Logout() async {
         leading: const Icon(Icons.my_library_books_rounded),
         title: const Text('Note'),
         onTap: () {
-           Get.to(const NotePage());
+           Get.to(const FetchData());
         },
       ),
       ListTile(
@@ -95,9 +100,13 @@ Future<void> _showNotification_Logout() async {
         title: const Text('Log out'),
         onTap: () async {
           await FirebaseServices().googleSignOut();
+          await FacebookAuth.i.logOut();
+          _userData = null;
+
           Get.to(() => LoginScreen(User));
           _showNotification_Logout();
           LogoutSuccessSnackBar(context);
+
         },
       ),
     ],

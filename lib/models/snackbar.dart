@@ -7,6 +7,16 @@ var success = Colors.green;
 var error = Colors.red; 
 var padding = EdgeInsets.all(20);
 
+// ! : Login W Facebook success
+  void FacebookLoginSnackBar(BuildContext context) {
+      final snackBar = SnackBar(
+        content: Text('Welcome Treepope Sawatsuntisuk,\n Login with Facebook is successful'),
+        backgroundColor: success,
+        padding: padding,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+
 // ! : Login W Google success
   void GoogleLoginSnackBar(BuildContext context) {
       final snackBar = SnackBar(

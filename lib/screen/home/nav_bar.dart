@@ -7,6 +7,8 @@ import 'package:flutter_application_1/screen/navigator/nav_page.dart';
 import 'package:flutter_application_1/screen/navigator/notes/note_home.dart';
 import 'package:flutter_application_1/screen/navigator/tasks/tasks_home.dart';
 
+import '../navigator/notes/note_fetchData.dart';
+
 class NavBar extends StatefulWidget {
 
   @override
@@ -64,7 +66,7 @@ class _NavBarState extends State<NavBar> {
         children: const [
           HomeScreen(),
           TasksPage(),
-          NotePage(),
+          FetchData(),
           AccountPage(),
         ],
       ),
