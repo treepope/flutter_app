@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter_application_1/screen/navigator/notes/note_insert.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import 'note_form.dart';
+import '../../../constants/colors.dart';
 import 'note_update.dart';
 class FetchData extends StatefulWidget {
   const FetchData({super.key});
@@ -18,6 +17,8 @@ class _FetchDataState extends State<FetchData> {
 
   Query dbRef = FirebaseDatabase.instance.ref().child('Notes');
   DatabaseReference reference = FirebaseDatabase.instance.ref().child('Notes');
+  final DateTime now = DateTime.now();
+  final DateFormat formatter = DateFormat("dd MMMM yyyy");
 
   // ! Dialog function
   void _showDialog({@required String? text}) {
@@ -82,13 +83,19 @@ class _FetchDataState extends State<FetchData> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    // TODO get Date Time from DB
+    dbRef = FirebaseDatabase.instance.ref().child('Notes').orderByChild('date');
+    dbRef = FirebaseDatabase.instance.ref().child('Notes').orderByChild('time');
+  }
+
   Widget listItem({required Map note}) {
     return SingleChildScrollView(
       child: Card(
-        elevation: 12,
-        shadowColor: Colors.grey,
-        margin: const EdgeInsets.all(10),
-        color: Colors.blue,
+        margin: const EdgeInsets.all(15),
+        color: Colors.white,
         child: InkWell(
           splashColor: Colors.blue.withAlpha(30),
           onLongPress: () {
@@ -99,22 +106,27 @@ class _FetchDataState extends State<FetchData> {
           },
           child: Container(
             width: 100.0,
-            height: 130.0,
-            padding: const EdgeInsets.all(12),
+            height: 150.0,
+            padding: const EdgeInsets.all(15),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                
                 Text(
                   note['title'],
-                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: tdBlack),
                 ),
                 const SizedBox(height: 5,),
                 Text(
                   note['type'],
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.white),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: tdGrey),
                 ),
                 const SizedBox(height: 15,),
+                Text(
+                  '${note['date'] + ' / ' + '${note['time']}'}',
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: tdGrey),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -128,7 +140,7 @@ class _FetchDataState extends State<FetchData> {
                       },
                       child: const Row(
                         children: [
-                          Icon(Icons.edit, color: Color.fromARGB(255, 248, 195, 61),)
+                          Icon(Icons.edit, color: Colors.blue,)
                         ],
                       ),
                     ),
@@ -141,7 +153,7 @@ class _FetchDataState extends State<FetchData> {
                       },
                       child: const Row(
                         children: [
-                          Icon(Icons.delete, color: Color.fromARGB(255, 255, 91, 79),)
+                          Icon(Icons.delete, color: Color(0xFFDA4040),)
                         ],
                       ),
                     ),
@@ -158,6 +170,7 @@ class _FetchDataState extends State<FetchData> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: tdBGColor,
       body: Container(
         height: double.infinity,
         child: FirebaseAnimatedList(

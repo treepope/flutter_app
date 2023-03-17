@@ -1,10 +1,8 @@
 // ignore_for_file: constant_identifier_names
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screen/home/home_screen.dart';
-import 'package:flutter_application_1/screen/home/widget/scroll_to_hide_widget.dart';
 import 'package:flutter_application_1/screen/navigator/account/account_home.dart';
 import 'package:flutter_application_1/screen/navigator/nav_page.dart';
-import 'package:flutter_application_1/screen/navigator/notes/note_home.dart';
 import 'package:flutter_application_1/screen/navigator/tasks/tasks_home.dart';
 
 import '../navigator/notes/note_fetchData.dart';

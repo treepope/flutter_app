@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../../models/snackbar.dart';
+import '../../home/nav_bar.dart';
 import 'note_fetchData.dart';
 
 class InsertData extends StatefulWidget {
@@ -18,65 +19,11 @@ class _InsertDataState extends State<InsertData> {
   late double _height;
   late double _width;
 
-  late String _setTime, _setDate;
-  late String _hour, _minute, _time;
-  late String dateTime;
-
-
-  // TODO var of date
-  DateTime selectedDate = DateTime.now();
-
-  // TODO var of time
-  TimeOfDay selectedTime = TimeOfDay(hour: 00, minute: 00);
-
-  // ! Select Date
-  Future<void> _selectDate(BuildContext context) async {
-  final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      initialDatePickerMode: DatePickerMode.day,
-      firstDate: DateTime(2023),
-      lastDate: DateTime(2101));
-  if (picked != null) {
-    setState(() {
-      selectedDate = picked;
-      dateController.text = DateFormat.yMd().format(selectedDate);
-    });
-  }
-}
-
-// ! Select Time
-// Future<void> _selectTime(BuildContext context) async {
-//     final TimeOfDay? picked = await showTimePicker(
-//       context: context,
-//       initialTime: selectedTime,
-//     );
-//     if (picked != null) {
-//       setState(() {
-//         selectedTime = picked;
-//         _hour = selectedTime.hour.toString();
-//         _minute = selectedTime.minute.toString();
-//         _time = _hour + ' : ' + _minute;
-//         timeController.text = _time;
-//         timeController.text = formatDate(
-//             DateTime(2019, 08, 1, selectedTime.hour, selectedTime.minute),
-//             [hh, ':', nn, " ", am]).toString();
-//       });
-//     }
-//   }
-
-  // TODO ex. March 10,2023
-  String currentDate = DateFormat().add_yMMMMd().format(DateTime.now());
-  // TODO ex. 2:19 AM
-  String currentTime = DateFormat().add_jm().format(DateTime.now());
-
   // TODO * Controller
-  final TextEditingController titleController = TextEditingController();
-  final TextEditingController typeController = TextEditingController();
-  final TextEditingController contentController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-  final TextEditingController dateController = TextEditingController();
-  final TextEditingController timeController = TextEditingController();
+  final titleController = TextEditingController();
+  final typeController = TextEditingController();
+  final contentController = TextEditingController();
+  final descriptionController = TextEditingController();
 
   // TODO get database 
   late DatabaseReference dbRef;
@@ -84,8 +31,6 @@ class _InsertDataState extends State<InsertData> {
   @override
   void initState() {
     super.initState();
-    // TODO Date format setup
-    dateController.text = DateFormat.yMd().format(DateTime.now());
 
     // TODO Create Collections
     dbRef = FirebaseDatabase.instance.ref().child('Notes');
@@ -95,7 +40,6 @@ class _InsertDataState extends State<InsertData> {
   Widget build(BuildContext context) {
     _height = MediaQuery.of(context).size.height;
     _width = MediaQuery.of(context).size.width;
-    dateTime = DateFormat.yMd().format(DateTime.now());
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -159,39 +103,6 @@ class _InsertDataState extends State<InsertData> {
                       minLines: 1,
                   ),
 
-                  // ! date insert
-                  const SizedBox(height: 30),
-                  const Text("choose date", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  InkWell(
-                    onTap: () {
-                      _selectDate(context);
-                    },
-                    child: Container(
-                      width: _width / 1.0,
-                      height: _height / 12.0,
-                      margin: const EdgeInsets.only(top: 10),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],),
-                      
-                      child: TextFormField(
-                        style: const TextStyle(fontSize: 20,fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                        enabled: false,
-                        keyboardType: TextInputType.text,
-                        controller: dateController,
-                        decoration: const InputDecoration(
-                          disabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide.none
-                          ),
-                        ),
-                        onSaved: (val) {
-                          _setDate = val!;
-                        },
-                      ),
-                    ),
-                  ),
-
                   const SizedBox(height: 15),
                   Container(
                     margin: const EdgeInsets.fromLTRB(0, 50, 0, 0),
@@ -209,9 +120,12 @@ class _InsertDataState extends State<InsertData> {
                           'type' : typeController.text,
                           'content': contentController.text,
                           'description': descriptionController.text,
+                          'date': DateFormat.yMMMEd().format(DateTime.now()).toString(),
+                          'time': DateFormat.jms().format(DateTime.now()).toString(),
                         };
                         dbRef.push().set(notes);
-                        Get.to(() => const FetchData());
+                        Get.to(() => NavBar());
+                        print('notes is added : ${notes}');
                         AddDataSnackBar(context);
                       },
                     ),

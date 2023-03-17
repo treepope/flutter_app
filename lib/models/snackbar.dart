@@ -88,11 +88,31 @@ var padding = EdgeInsets.all(20);
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  // ! : Null data
-  void NullDataSnackBar(BuildContext context) {
+  // ! : delete data
+  void deleteDataSnackBar(BuildContext context) {
       final snackBar = SnackBar(
-        content: Text('Data is added'),
+        content: Text('Data is deleted'),
         backgroundColor: error,
+        padding: padding,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  // ! : Done data
+  void DoneDataSnackBar(BuildContext context) {
+      final snackBar = SnackBar(
+        content: Text('Tasks is Done !'),
+        backgroundColor: success,
+        padding: padding,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  // ! : Add data is successful
+  void AddTasksSnackBar(BuildContext context) {
+      final snackBar = SnackBar(
+        content: Text('Tasks is added'),
+        backgroundColor: success,
         padding: padding,
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);

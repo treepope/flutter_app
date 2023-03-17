@@ -1,15 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_application_1/screen/home/home_screen.dart';
 import 'package:flutter_application_1/screen/auth/login.dart';
 import 'package:flutter_application_1/screen/navigator/account/account_home.dart';
 import 'package:flutter_application_1/screen/navigator/notes/note_fetchData.dart';
-import 'package:flutter_application_1/screen/navigator/notes/note_home.dart';
 import 'package:flutter_application_1/screen/navigator/settings/settings_home.dart';
 import 'package:flutter_application_1/screen/navigator/tasks/tasks_home.dart';
 import 'package:flutter_application_1/services/firebase_services.dart';

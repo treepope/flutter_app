@@ -1,144 +1,322 @@
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_application_1/screen/navigator/notes/note_form.dart';
-import 'package:flutter_application_1/screen/navigator/tasks/tasks_form.dart';
-import 'package:get/get.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_application_1/constants/colors.dart';
+import 'package:flutter_application_1/screen/navigator/tasks/tasks_update.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+
+import '../../../models/snackbar.dart';
 
 class TasksPage extends StatefulWidget {
-  static const routeName = '/tasks';
-
-  const TasksPage({Key? key}) : super(key: key);
+  const TasksPage({super.key});
 
   @override
-  State<TasksPage> createState() => _NotePageState();
+  State<TasksPage> createState() => _HomeState();
 }
 
-class _NotePageState extends State<TasksPage> {
-  bool isChecked = false;
-  
-  // Dialog function
-  void _showDialog({@required String? text}) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5),
-          ),
-          elevation: 0,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 10,
-            ),
-            child: IntrinsicWidth(
-              child: IntrinsicHeight(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Text(
-                      "Note Details",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      text!,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: ElevatedButton(
-                        
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text("OK"),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
+class _HomeState extends State<TasksPage> {
+  bool? isChecked = false;
+
+  // TODO set key form
+  final formKey = GlobalKey<FormState>();
+
+  // TODO * Controller
+  final tasksController = TextEditingController();
+  final serachFilter = TextEditingController();
+  final editController = TextEditingController();
+
+  // TODO get database
+  Query dbRef = FirebaseDatabase.instance.ref().child('Tasks');
+  late DatabaseReference databaseReference =
+      FirebaseDatabase.instance.ref().child('Tasks');
+
+  // Future<void> _showDialog() async {
+  //   return showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //           title: const Text('Update'),
+  //           content: Container(
+  //             child: TextField(
+  //               controller: editController,
+  //               decoration: const InputDecoration(hintText: 'Edit Tasks'),
+  //             ),
+  //           ),
+  //           actions: [
+  //             TextButton(
+  //                 onPressed: () {
+  //                   Navigator.pop(context);
+  //                 },
+  //                 child: const Text('Cancel')),
+  //             TextButton(
+  //                 onPressed: () {
+  //                   Map<String, dynamic> tasks = {'items': editController.text};
+  //                   databaseReference
+  //                       .child(widget.taskKey)
+  //                       .update(tasks)
+  //                       .then((value) => {Navigator.pop(context)});
+  //                 },
+  //                 child: const Text('Update')),
+  //           ],
+  //         );
+  //       });
+  // }
 
   @override
   void initState() {
     super.initState();
+    // TODO get Date Time from DB
+    dbRef = FirebaseDatabase.instance.ref().child('Tasks').orderByChild('date');
+    dbRef = FirebaseDatabase.instance.ref().child('Tasks').orderByChild('time');
+    // TODO Create Collections
+    databaseReference = FirebaseDatabase.instance.ref().child('Tasks');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("Tasks").snapshots(),
-          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            return ListView(
-              children: snapshot.data!.docs.map((document) {
-                return Card(
-                  elevation: 16,
-                  shadowColor: Colors.grey,
-                  margin: const EdgeInsets.all(20),
-                  child: InkWell(
-                    splashColor: Colors.blue.withAlpha(30),
-                    onLongPress: () {},
-                    child: SizedBox(
-                      width: 100.0,
-                      height: 70.0,
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            // CheckboxListTile(
-                            //   title: Text('title'),
-                            //   subtitle: Text('content'),
-                            //   value: isChecked,
-                            //   onChanged: (value) {
-                            //     setState(() => isChecked = value!);
-                            //   },
-                            // ),
-                          ],
-                        ),
-                      ),
+        backgroundColor: tdBGColor,
+        body: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              const SizedBox(
+                height: 10,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                margin: const EdgeInsets.only(
+                  top: 20,
+                  bottom: 0,
+                ),
+                child: const Text(
+                  'All Tasks',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 36,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  print('Tapped');
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  margin: const EdgeInsets.only(
+                    top: 5,
+                    bottom: 20,
+                  ),
+                  child: const Text(
+                    'Done Tasks',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                );
-              }).toList(),
-            );
-          }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.to(() => TasksForm());
-        },
-        child: const Icon(Icons.add),
+                ),
+              ),
+              Expanded(
+                  child: FirebaseAnimatedList(
+                      query: dbRef,
+                      defaultChild: const Text('Loading'),
+                      itemBuilder: (BuildContext context, DataSnapshot snapshot,
+                          Animation<double> animation, int index) {
+                        Map task = snapshot.value as Map;
+                        task['key'] = snapshot.key;
+
+                        return listTasks(task: task);
+                      })),
+              Align(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: addBox(),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+            ],
+          ),
+        ));
+  }
+
+  // Widget searchBox() {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 15),
+  //     decoration: BoxDecoration(
+  //       color: Colors.white,
+  //       borderRadius: BorderRadius.circular(20),
+  //     ),
+  //     child: Form(
+  //       key: formKey,
+  //       child: TextFormField(
+  //         controller: serachFilter,
+  //         onChanged: (String value) {
+  //           setState(() {
+
+  //           });
+  //         },
+  //         decoration: const InputDecoration(
+  //           contentPadding: EdgeInsets.all(0),
+  //           prefixIcon: Icon(
+  //             Icons.search,
+  //             color: tdBlack,
+  //             size: 20,
+  //           ),
+  //           prefixIconConstraints: BoxConstraints(
+  //             maxHeight: 20,
+  //             minWidth: 25,
+  //           ),
+  //           border: InputBorder.none,
+  //           hintText: 'Search',
+  //           hintStyle: TextStyle(color: tdGrey),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  Widget listTasks({required Map task}) {
+    return SingleChildScrollView(
+      child: Card(
+        margin: const EdgeInsets.all(10),
+        color: Colors.white,
+        child: InkWell(
+          onDoubleTap: () {
+            databaseReference.child(task['items']).remove();
+            deleteDataSnackBar(context);
+          },
+          child: Container(
+            width: 100.0,
+            height: 120.0,
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  task['items'],
+                  style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: tdBlack),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(task['date']),
+                Text(task['time']),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    PopupMenuButton(
+                        icon: const Icon(Icons.more_vert_rounded),
+                        itemBuilder: (context) => [
+                              PopupMenuItem(
+                                  value: 1,
+                                  child: ListTile(
+                                    leading: const Icon(Icons.check_box_rounded),
+                                    title: const Text('Done'),
+                                    onTap: () {
+                                      databaseReference
+                                          .child(task['key'])
+                                          .remove();
+                                      DoneDataSnackBar(context);
+                                    },
+                                  )),
+                              PopupMenuItem(
+                                  value: 1,
+                                  child: ListTile(
+                                    leading: const Icon(Icons.edit),
+                                    title: const Text('Edit'),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) => TaskUpdateRecord(
+                                                  taskKey: task['key'])));
+                                    },
+                                  )),
+                              PopupMenuItem(
+                                  value: 1,
+                                  child: ListTile(
+                                    leading: const Icon(Icons.delete_rounded),
+                                    title: const Text('Delete'),
+                                    onTap: () {
+                                      databaseReference
+                                          .child(task['key'])
+                                          .remove();
+                                      deleteDataSnackBar(context);
+                                    },
+                                  )),
+                            ]),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
-} //extend state  
+
+  Widget addBox() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Form(
+        key: formKey,
+        child: TextFormField(
+          controller: tasksController,
+          decoration: InputDecoration(
+            prefixIcon: IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () async {
+                // ! insert to realtime db
+                Map<String, String> tasks = {
+                  'items': tasksController.text,
+                  'date': DateFormat.yMMMEd().format(DateTime.now()).toString(),
+                  'time': DateFormat.jms().format(DateTime.now()).toString(),
+                };
+                databaseReference.push().set(tasks);
+                // ! output
+                print('tasks is added : ${tasks}');
+                AddTasksSnackBar(context);
+                formKey.currentState?.reset();
+              },
+            ),
+            border: InputBorder.none,
+            hintText: 'Add a new item',
+            hintStyle: const TextStyle(color: tdGrey, fontSize: 16),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildCheckbox() => Checkbox(
+      value: isChecked,
+      onChanged: (isChecked) {
+        setState(() {
+          this.isChecked = isChecked;
+        });
+      });
+}
