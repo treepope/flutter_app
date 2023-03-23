@@ -3,7 +3,9 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/constants/colors.dart';
 import 'package:flutter_application_1/screen/navigator/tasks/tasks_update.dart';
-import 'package:get/get.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
 import 'package:intl/intl.dart';
 
 import '../../../models/snackbar.dart';
@@ -26,42 +28,20 @@ class _HomeState extends State<TasksPage> {
   final serachFilter = TextEditingController();
   final editController = TextEditingController();
 
+  final _title = TextEditingController();
+  final _desc = TextEditingController();
+  final _date = TextEditingController();
+  final _time = TextEditingController();
+  
+  DateTime dateTime = DateTime.now();
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   // TODO get database
   Query dbRef = FirebaseDatabase.instance.ref().child('Tasks');
   late DatabaseReference databaseReference =
       FirebaseDatabase.instance.ref().child('Tasks');
-
-  // Future<void> _showDialog() async {
-  //   return showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return AlertDialog(
-  //           title: const Text('Update'),
-  //           content: Container(
-  //             child: TextField(
-  //               controller: editController,
-  //               decoration: const InputDecoration(hintText: 'Edit Tasks'),
-  //             ),
-  //           ),
-  //           actions: [
-  //             TextButton(
-  //                 onPressed: () {
-  //                   Navigator.pop(context);
-  //                 },
-  //                 child: const Text('Cancel')),
-  //             TextButton(
-  //                 onPressed: () {
-  //                   Map<String, dynamic> tasks = {'items': editController.text};
-  //                   databaseReference
-  //                       .child(widget.taskKey)
-  //                       .update(tasks)
-  //                       .then((value) => {Navigator.pop(context)});
-  //                 },
-  //                 child: const Text('Update')),
-  //           ],
-  //         );
-  //       });
-  // }
 
   @override
   void initState() {
@@ -71,6 +51,57 @@ class _HomeState extends State<TasksPage> {
     dbRef = FirebaseDatabase.instance.ref().child('Tasks').orderByChild('time');
     // TODO Create Collections
     databaseReference = FirebaseDatabase.instance.ref().child('Tasks');
+
+    const AndroidInitializationSettings androidInitializationSettings =
+        AndroidInitializationSettings("@mipmap/ic_launcher");
+
+    const IOSInitializationSettings iosInitializationSettings =
+        IOSInitializationSettings();
+
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+      android: androidInitializationSettings,
+    );
+  }
+
+    showNotification() {
+    if (_title.text.isEmpty || _desc.text.isEmpty) {
+      return;
+    }
+
+    final AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      "ScheduleNotification001",
+      "Notify Me",
+      'noti',
+      importance: Importance.high,
+    );
+
+    final IOSNotificationDetails iosNotificationDetails =
+        IOSNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    final NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+      iOS: iosNotificationDetails,
+      macOS: null,
+    );
+
+    // flutterLocalNotificationsPlugin.show(
+    //     01, _title.text, _desc.text, notificationDetails);
+
+    tz.initializeTimeZones();
+    final tz.TZDateTime scheduledAt = tz.TZDateTime.from(dateTime, tz.local);
+
+    flutterLocalNotificationsPlugin.zonedSchedule(
+        01, _title.text, _desc.text, scheduledAt, notificationDetails,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.wallClockTime,
+        androidAllowWhileIdle: true,
+        payload: 'Ths s the data');
   }
 
   @override
@@ -151,42 +182,6 @@ class _HomeState extends State<TasksPage> {
         ));
   }
 
-  // Widget searchBox() {
-  //   return Container(
-  //     padding: const EdgeInsets.symmetric(horizontal: 15),
-  //     decoration: BoxDecoration(
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(20),
-  //     ),
-  //     child: Form(
-  //       key: formKey,
-  //       child: TextFormField(
-  //         controller: serachFilter,
-  //         onChanged: (String value) {
-  //           setState(() {
-
-  //           });
-  //         },
-  //         decoration: const InputDecoration(
-  //           contentPadding: EdgeInsets.all(0),
-  //           prefixIcon: Icon(
-  //             Icons.search,
-  //             color: tdBlack,
-  //             size: 20,
-  //           ),
-  //           prefixIconConstraints: BoxConstraints(
-  //             maxHeight: 20,
-  //             minWidth: 25,
-  //           ),
-  //           border: InputBorder.none,
-  //           hintText: 'Search',
-  //           hintStyle: TextStyle(color: tdGrey),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget listTasks({required Map task}) {
     return SingleChildScrollView(
       child: Card(
@@ -212,9 +207,7 @@ class _HomeState extends State<TasksPage> {
                       fontWeight: FontWeight.bold,
                       color: tdBlack),
                 ),
-                const SizedBox(
-                  height: 5,
-                ),
+                
                 Text(task['date']),
                 Text(task['time']),
                 const SizedBox(
@@ -245,11 +238,7 @@ class _HomeState extends State<TasksPage> {
                                     leading: const Icon(Icons.edit),
                                     title: const Text('Edit'),
                                     onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (_) => TaskUpdateRecord(
-                                                  taskKey: task['key'])));
+                                       Navigator.push(context, MaterialPageRoute(builder: (_) => TaskUpdateRecord(taskKey: task['key'])));
                                     },
                                   )),
                               PopupMenuItem(

@@ -81,13 +81,6 @@ Future<void> _showNotification_Logout() async {
            Get.to(const TasksPage());
         },
       ),
-      ListTile(
-        leading: const Icon(Icons.settings),
-        title: const Text('Settings'),
-        onTap: () {
-           Get.to(const SettingsPage());
-        },
-      ),
 
       // TODO: Logout
       ListTile(

@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../../constants/colors.dart';
 import 'note_update.dart';
 class FetchData extends StatefulWidget {
+  
   const FetchData({super.key});
 
   @override
@@ -14,6 +15,9 @@ class FetchData extends StatefulWidget {
 }
 
 class _FetchDataState extends State<FetchData> {
+  late DateTime _firstDay;
+  late DateTime _lastDay;
+  late DateTime _selectedDay;
 
   Query dbRef = FirebaseDatabase.instance.ref().child('Notes');
   DatabaseReference reference = FirebaseDatabase.instance.ref().child('Notes');
@@ -86,6 +90,9 @@ class _FetchDataState extends State<FetchData> {
   @override
   void initState() {
     super.initState();
+    _firstDay = DateTime.now().subtract(const Duration(days: 1000));
+    _lastDay = DateTime.now().add(const Duration(days: 1000));
+    _selectedDay = DateTime.now();
     // TODO get Date Time from DB
     dbRef = FirebaseDatabase.instance.ref().child('Notes').orderByChild('date');
     dbRef = FirebaseDatabase.instance.ref().child('Notes').orderByChild('time');
@@ -191,7 +198,7 @@ class _FetchDataState extends State<FetchData> {
           Navigator.push(
             context, 
             MaterialPageRoute(
-              builder: (context) => const InsertData()));
+              builder: (context) =>   InsertData(firstDate: _firstDay, lastDate: _lastDay ,selectedDate: _selectedDay,)));
         },
         child: const Icon(Icons.add),
       ),
